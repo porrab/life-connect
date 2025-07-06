@@ -133,9 +133,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         </el-button>
       </el-form-item>
     </el-form>
-    <div class="login-link mt-5">
+    <div class="text-center mt-5">
       มีบัญชีอยู่แล้ว?
-      <router-link to="/login" class="text-blue-600 hover:underline">เข้าสู่ระบบ</router-link>
+      <router-link :to="{ name: 'Login' }" class="text-blue-600 hover:underline"
+        >เข้าสู่ระบบ</router-link
+      >
     </div>
   </div>
 </template>

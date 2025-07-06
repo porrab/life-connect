@@ -4,7 +4,8 @@ import Register from './views/Register.vue'
 
 <template>
   <div>
-    <Register></Register>
+    <router-link :to="{ name: 'Register' }">register</router-link>
+    <router-view></router-view>
   </div>
 </template>
 

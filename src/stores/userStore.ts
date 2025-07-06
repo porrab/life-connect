@@ -2,12 +2,8 @@ import { getAuth } from 'firebase/auth'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { type UserProfile } from '@/types/user'
 
-type UserProfile = {
-  firstName: string
-  lastName: string
-  email: string
-}
 export const useUserStore = defineStore('user', () => {
   const userProfile = ref<UserProfile | null>(null)
   const isLoggedIn = ref(false)

@@ -13,6 +13,7 @@ const formData = ref({
   firstName: '',
   lastName: '',
   email: '',
+  dateOfBirth: '',
   password: '',
   confirmPassword: '',
 })
@@ -34,6 +35,7 @@ const rules = ref<FormRules>({
     { required: true, message: 'กรุณากรอกอีเมล', trigger: 'blur' },
     { type: 'email', message: 'รูปแบบอีเมลไม่ถูกต้อง', trigger: ['blur', 'change'] },
   ],
+  dateOfBirth: [{ required: true, message: 'กรุณาเลือกวันเกิด', trigger: 'change' }],
   password: [
     { required: true, message: 'กรุณากรอกรหัสผ่าน', trigger: 'blur' },
     { min: 6, message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', trigger: 'blur' },
@@ -66,6 +68,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       firstName: formData.value.firstName,
       lastName: formData.value.lastName,
       email: formData.value.email,
+      dateOfBirth: formData.value.dateOfBirth,
       createdAt: new Date(),
     })
 
@@ -117,6 +120,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
       <el-form-item label="อีเมล" prop="email">
         <el-input v-model="formData.email" placeholder="example@email.com" />
+      </el-form-item>
+
+      <el-form-item label="วันเกิด" prop="dateOfBirth" class="w-full">
+        <el-date-picker
+          v-model="formData.dateOfBirth"
+          type="date"
+          placeholder="เลือกวันเกิด"
+          format="DD/MM/YYYY"
+          value-format="YYYY-MM-DD"
+          class="w-full"
+        />
       </el-form-item>
 
       <el-form-item label="รหัสผ่าน" prop="password">

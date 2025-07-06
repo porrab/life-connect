@@ -1,8 +1,10 @@
-<script setup></script>
+<script setup>
+import Register from './views/Register.vue'
+</script>
 
 <template>
   <div>
-    <h1>hello world</h1>
+    <Register></Register>
   </div>
 </template>
 

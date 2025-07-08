@@ -3,5 +3,5 @@ export interface UserProfile {
   lastName: string
   email: string
   dateOfBirth: string
-  isVerified: boolean
+  isVerified?: boolean
 }

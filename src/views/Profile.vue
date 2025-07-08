@@ -2,12 +2,13 @@
 import { useUserStore } from '@/stores/userStore'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { Check, Close } from '@element-plus/icons-vue'
 
 const userStore = useUserStore()
 const router = useRouter()
 
 const isVerified = computed(() => {
-  userStore.userProfile?.isVerified || false
+  return userStore.userProfile?.isVerified || false
 })
 
 const startKYC = () => {

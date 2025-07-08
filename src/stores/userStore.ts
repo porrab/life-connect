@@ -46,5 +46,10 @@ export const useUserStore = defineStore('user', () => {
       }
     }
   }
-  return { userProfile, isLoggedIn, fetchUserProfile }
+  function setUserAsVerified() {
+    if (userProfile.value) {
+      userProfile.value.isVerified = true
+    }
+  }
+  return { userProfile, isLoggedIn, fetchUserProfile, setUserAsVerified }
 })

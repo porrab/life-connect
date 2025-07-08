@@ -13,6 +13,8 @@ onMounted(() => {
     userStore.fetchUserProfile()
   })
 })
+
+
 </script>
 
 <template>

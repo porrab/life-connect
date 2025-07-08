@@ -35,6 +35,15 @@ export const useUserStore = defineStore('user', () => {
     } else {
       isLoggedIn.value = false
       userProfile.value = null
+      if (import.meta.env.DEV) {
+        userProfile.value = {
+          firstName: 'ห่าน (ทดสอบ)',
+          lastName: 'รักดี',
+          email: 'test@example.com',
+          dateOfBirth: '1990-01-01',
+          isVerified: false,
+        }
+      }
     }
   }
   return { userProfile, isLoggedIn, fetchUserProfile }

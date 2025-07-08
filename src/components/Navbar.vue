@@ -17,7 +17,9 @@ const userStore = useUserStore()
     <div class="flex items-center space-x-4">
       <el-button :icon="Bell" circle />
       <span>{{ userStore.userProfile?.firstName }}</span>
-      <el-avatar src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+      <router-link :to="{ name: 'Profile' }"
+        ><el-avatar src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+      /></router-link>
     </div>
   </header>
 </template>

@@ -21,7 +21,7 @@ import { House, Document, Bell, User } from '@element-plus/icons-vue'
       <span class="text-xs">แจ้งเตือน</span>
     </router-link>
 
-    <router-link to="/" class="flex flex-col items-center space-y-1 text-gray-500">
+    <router-link to="/profile" class="flex flex-col items-center space-y-1 text-gray-500">
       <el-icon :size="24"><User /></el-icon>
       <span class="text-xs">โปรไฟล์</span>
     </router-link>

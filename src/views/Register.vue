@@ -122,7 +122,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formData.email" placeholder="example@email.com" />
       </el-form-item>
 
-      <el-form-item label="วันเกิด" prop="dateOfBirth" class="w-full">
+      <el-form-item label="วันเกิด (age > 1966 check elder func)" prop="dateOfBirth" class="w-full">
         <el-date-picker
           v-model="formData.dateOfBirth"
           type="date"

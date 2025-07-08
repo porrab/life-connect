@@ -21,7 +21,10 @@ const userName = computed(() => {
 })
 
 const mainNotification = computed(() => {
+  console.log(userStore.userProfile)
   if (userStore.userProfile) {
+    const notification = getRelevantNotification(userStore.userProfile)
+    console.log(notification)
     return getRelevantNotification(userStore.userProfile)
   }
 })
@@ -35,45 +38,6 @@ const mainNotification = computed(() => {
     </div>
 
     <div>
-      <h2 class="text-lg font-semibold text-gray-700 mb-2">การแจ้งเตือน</h2>
-      <!-- <div
-        class="bg-white p-4 rounded-xl shadow-md border border-gray-100 flex items-center space-x-4 cursor-pointer hover:bg-gray-50"
-      >
-        <div class="bg-blue-100 p-3 rounded-full">
-          <el-icon :size="24" color="#2563eb"><Bell /></el-icon>
-        </div>
-
-        <div class="flex-grow">
-          <div class="flex items-center space-x-2">
-            <h3 class="font-bold text-gray-800">เบี้ยยังชีพผู้สูงอายุ</h3>
-            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full"
-              >ใหม่</span
-            >
-          </div>
-          <p class="text-sm text-gray-600 mt-1">
-            คุณจะมีอายุครบ 60 ปี ในอีก 3 เดือน สามารถยื่นขอเบี้ยยังชีพได้แล้ว
-          </p>
-          <p class="text-sm font-semibold text-green-600 mt-2">
-            <span class="mr-1">💵</span> 600 บาท / เดือน
-          </p>
-        </div>
-
-        <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 text-gray-400"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </div>
-      </div> -->
-
       <div v-if="mainNotification">
         <h2 class="text-lg font-semibold text-gray-700 mb-2">การแจ้งเตือน</h2>
         <div class="bg-white ...">

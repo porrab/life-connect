@@ -37,10 +37,11 @@ export const useUserStore = defineStore('user', () => {
       userProfile.value = null
       if (import.meta.env.DEV) {
         userProfile.value = {
+          uid: '1',
           firstName: 'ห่าน (ทดสอบ)',
           lastName: 'รักดี',
           email: 'test@example.com',
-          dateOfBirth: '1990-01-01',
+          dateOfBirth: '1960-01-01',
           isVerified: false,
         }
       }

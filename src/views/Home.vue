@@ -6,8 +6,9 @@ import education from '@/assets/education.png'
 import home from '@/assets/home.png'
 import setting from '@/assets/setting.png'
 import { useUserStore } from '@/stores/userStore'
-import { Bell } from '@element-plus/icons-vue'
+import { Bell, ArrowRight } from '@element-plus/icons-vue'
 import { getRelevantNotification } from '@/utils/notificationEngine'
+
 const services = ref([
   { title: 'สุขภาพ', icon: heart },
   { title: 'การศึกษา', icon: education },
@@ -41,16 +42,19 @@ const mainNotification = computed(() => {
       <div v-if="mainNotification">
         <h2 class="text-lg font-semibold text-gray-700 mb-2">การแจ้งเตือน</h2>
         <div class="bg-white ...">
-          <div class="flex-grow">
-            <div class="flex items-center space-x-2">
-              <h3 class="font-bold text-gray-800">{{ mainNotification.title }}</h3>
-              <span v-if="mainNotification.isNew" class="bg-blue-100 ...">ใหม่</span>
+          <RouterLink :to="{ name: 'EventDetail', params: { id: mainNotification.id } }">
+            <div class="flex-grow">
+              <div class="flex items-center space-x-2">
+                <h3 class="font-bold text-gray-800">{{ mainNotification.title }}</h3>
+                <span v-if="mainNotification.isNew" class="bg-blue-100 ...">ใหม่</span>
+              </div>
+              <p class="text-sm text-gray-600 mt-1">{{ mainNotification.description }}</p>
+              <p v-if="mainNotification.benefit" class="text-sm font-semibold text-green-600 mt-2">
+                <span class="mr-1">💵</span> {{ mainNotification.benefit }}
+                <el-icon class="ml-5"><ArrowRight /></el-icon>
+              </p>
             </div>
-            <p class="text-sm text-gray-600 mt-1">{{ mainNotification.description }}</p>
-            <p v-if="mainNotification.benefit" class="text-sm font-semibold text-green-600 mt-2">
-              <span class="mr-1">💵</span> {{ mainNotification.benefit }}
-            </p>
-          </div>
+          </RouterLink>
         </div>
       </div>
 

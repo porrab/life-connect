@@ -8,6 +8,7 @@ import setting from '@/assets/setting.png'
 import { useUserStore } from '@/stores/userStore'
 import { Bell, ArrowRight } from '@element-plus/icons-vue'
 import { getRelevantNotification } from '@/utils/notificationEngine'
+import Heading from '@/components/Heading.vue'
 
 const services = ref([
   { title: 'สุขภาพ', icon: heart },
@@ -32,11 +33,11 @@ const mainNotification = computed(() => {
 </script>
 
 <template>
-  <div class="container space-y-6">
-    <div class="text-center">
-      <h1 class="text-2xl font-bold text-gray-800">สวัสดีคุณ {{ userName }}</h1>
-      <p class="text-sm text-gray-500">ระบบ AI ช่วยดูแลสิทธิประโยชน์ของคุณ</p>
-    </div>
+  <div class="container">
+    <Heading
+      :head="`สวัสดีคุณ ${userName}`"
+      :description="`ระบบ AI ช่วยดูแลสิทธิประโยชน์ของคุณ`"
+    ></Heading>
 
     <div>
       <div v-if="mainNotification">

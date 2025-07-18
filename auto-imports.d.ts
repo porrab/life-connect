@@ -12,6 +12,7 @@ declare global {
   const ElMe: typeof import('element-plus/es')['ElMe']
   const ElMes: typeof import('element-plus/es')['ElMes']
   const ElMess: typeof import('element-plus/es')['ElMess']
+  const ElMessag: typeof import('element-plus/es')['ElMessag']
   const ElMessage: typeof import('element-plus/es')['ElMessage']
   const ElN: typeof import('element-plus/es')['ElN']
   const ElNo: typeof import('element-plus/es')['ElNo']

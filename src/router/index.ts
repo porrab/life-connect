@@ -1,5 +1,6 @@
 import BenefitCard from '@/components/BenefitCard.vue'
 import Benefits from '@/views/Benefits.vue'
+import BookingView from '@/views/BookingView.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import EventPreRegister from '@/views/EventPreRegister.vue'
 import Home from '@/views/Home.vue'
@@ -52,6 +53,13 @@ const router = createRouter({
       path: '/event/:id',
       name: 'EventDetail',
       component: EventDetail,
+      props: true,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/booking/:serviceId',
+      name: 'Booking',
+      component: BookingView,
       props: true,
       meta: { requiresAuth: true },
     },

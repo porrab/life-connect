@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   Clock,
   Location,
@@ -12,8 +12,10 @@ import {
   ArrowRight,
 } from '@element-plus/icons-vue'
 import Process from '@/components/Process.vue'
+import Heading from '@/components/Heading.vue'
 
 const route = useRoute()
+const router = useRouter()
 const eventDetails = computed(() => {
   return {
     title: 'เบี้ยยังชีพผู้สูงอายุ',
@@ -52,6 +54,11 @@ const eventDetails = computed(() => {
 <template>
   <div class="container">
     <Process :percent="40"></Process>
+    <Heading
+      class="mb-5"
+      :head="'เบี้ยเลี้ยงผุู้สูงอายุ'"
+      :description="'สิทธิประโยชน์ที่คุณจะได้รับ'"
+    ></Heading>
     <div class="bg-green-500 text-white p-6 rounded-2xl text-center shadow-lg mb-6">
       <p class="text-4xl font-bold">{{ eventDetails.benefit }}</p>
       <p class="opacity-90">ต่อเดือน</p>
@@ -104,10 +111,17 @@ const eventDetails = computed(() => {
     </div>
 
     <div class="mt-8 space-y-3 pb-16">
-      <el-button type="primary" size="large" class="w-full !bg-gray-800 !border-gray-800">
+      <el-button
+        @click="router.push({ name: 'Booking', params: { serviceId: 'elderly_allowance' } })"
+        type="primary"
+        size="large"
+        class="w-full !bg-gray-800 !border-gray-800"
+      >
         จองคิว <el-icon class="ml-2"><ArrowRight /></el-icon>
       </el-button>
-      <el-button size="large" class="w-full" style="margin-left: 0px"> ย้อนกลับ </el-button>
+      <el-button @click="router.go(-1)" size="large" class="w-full" style="margin-left: 0px">
+        ย้อนกลับ
+      </el-button>
     </div>
   </div>
 </template>

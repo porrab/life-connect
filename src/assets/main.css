@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
 .container {
-  padding: 1.5rem;
+  padding: 1rem;
+  background-color: var(--color-gray-50);
+  min-height: 100vh;
 }
 
 #app-container {

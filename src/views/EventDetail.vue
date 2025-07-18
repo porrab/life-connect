@@ -1,67 +1,113 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Clock, Location, CircleCheckFilled } from '@element-plus/icons-vue'
+import {
+  Clock,
+  Location,
+  CircleCheckFilled,
+  User,
+  Place,
+  Files,
+  Timer,
+  ArrowRight,
+} from '@element-plus/icons-vue'
+import Process from '@/components/Process.vue'
+
 const route = useRoute()
 const eventDetails = computed(() => {
   return {
     title: 'เบี้ยยังชีพผู้สูงอายุ',
-    ageCondition: 'อายุครบ 60 ปีขึ้นไป',
-    nationality: 'มีสัญชาติไทย',
-    benefit: '600 บาท/เดือน',
-    totalBenefit: '7,200 บาท/ปี',
-    checklist: [
-      'ทะเบียนบ้านฉบับเจ้าบ้าน (ตัวจริง)',
-      'บัตรประจำตัวประชาชน (ตัวจริง)',
-      'สมุดบัญชีเงินฝากธนาคาร (ตัวจริง)',
+    benefit: '600 บาท',
+    totalBenefit: '7,200 บาท',
+
+    requirements: [
+      'อายุครบ 60 ปีขึ้นไป',
+      'มีสัญชาติไทย',
+      'มีที่อยู่ตามทะเบียนบ้าน',
+      'ไม่ได้รับเบี้ยยังชีพประเภทอื่น',
     ],
-    location: 'สำนักงานเขต/เทศบาล/อบต. ตามทะเบียนบ้าน',
-    time: '08:30-16:30 น.',
+
+    locationDetails: {
+      place: 'สำนักงานเขตที่อยู่ตามทะเบียนบ้าน',
+      time: 'เวลาทำการ: จันทร์-ศุกร์ 08:30-16:30 น.',
+    },
+
+    documents: [
+      'บัตรประชาชนตัวจริง',
+      'สำเนาบัตรประชาชน (หน้า-หลัง)',
+      'สำเนาทะเบียนบ้าน',
+      'สมุดบัญชีธนาคาร (หน้าแรก)',
+    ],
+
+    processTimeline: [
+      'บัตรประชาชนตัวจริง',
+      'สำเนาบัตรประชาชน (หน้า-หลัง)',
+      'สำเนาทะเบียนบ้าน',
+      'สมุดบัญชีธนาคาร (หน้าแรก)',
+    ],
   }
 })
 </script>
 
 <template>
-  <div class="p-4 space-y-6">
-    <div class="text-center">
-      <h1 class="text-2xl font-bold text-gray-800">{{ eventDetails.title }}</h1>
-      <p class="text-sm text-gray-500">สิทธิประโยชน์ที่คุณจะได้รับ</p>
+  <div class="container">
+    <Process :percent="40"></Process>
+    <div class="bg-green-500 text-white p-6 rounded-2xl text-center shadow-lg mb-6">
+      <p class="text-4xl font-bold">{{ eventDetails.benefit }}</p>
+      <p class="opacity-90">ต่อเดือน</p>
+      <div class="bg-green-400 rounded-full px-4 py-1 inline-block mt-4">
+        <p class="text-sm">เงินที่จะได้รับต่อปี {{ eventDetails.totalBenefit }}</p>
+      </div>
     </div>
 
-    <div class="bg-green-100 p-6 rounded-xl text-center">
-      <p class="text-green-800 font-semibold">คุณจะได้รับ</p>
-      <p class="text-4xl font-bold text-green-700 my-2">{{ eventDetails.benefit }}</p>
-      <p class="text-green-600">คิดเป็น {{ eventDetails.totalBenefit }}</p>
+    <div class="space-y-4">
+      <div class="bg-white p-5 rounded-2xl shadow-sm">
+        <div class="flex items-center mb-3">
+          <el-icon class="mr-2 text-green-500" :size="24"><CircleCheckFilled /></el-icon>
+          <h3 class="text-lg font-semibold text-gray-800">เงื่อนไขการรับสิทธิ์</h3>
+        </div>
+        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
+          <li v-for="item in eventDetails.requirements" :key="item">{{ item }}</li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm">
+        <div class="flex items-center mb-3">
+          <el-icon class="mr-2 text-blue-500" :size="24"><Place /></el-icon>
+          <h3 class="text-lg font-semibold text-gray-800">สถานที่ยื่นคำขอ</h3>
+        </div>
+        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
+          <li>{{ eventDetails.locationDetails.place }}</li>
+          <li>{{ eventDetails.locationDetails.time }}</li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm">
+        <div class="flex items-center mb-3">
+          <el-icon class="mr-2 text-orange-500" :size="24"><Files /></el-icon>
+          <h3 class="text-lg font-semibold text-gray-800">เอกสารที่ต้องใช้</h3>
+        </div>
+        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
+          <li v-for="item in eventDetails.documents" :key="item">{{ item }}</li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl shadow-sm">
+        <div class="flex items-center mb-3">
+          <el-icon class="mr-2 text-purple-500" :size="24"><Timer /></el-icon>
+          <h3 class="text-lg font-semibold text-gray-800">ระยะเวลาที่ใช้ดำเนินการ</h3>
+        </div>
+        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
+          <li v-for="item in eventDetails.processTimeline" :key="item">{{ item }}</li>
+        </ul>
+      </div>
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">คุณสมบัติและเอกสารที่ต้องใช้</h3>
-      <ul class="space-y-2">
-        <li class="flex items-center">
-          <el-icon color="green" class="mr-2"><CircleCheckFilled /></el-icon>
-          <span>{{ eventDetails.ageCondition }}</span>
-        </li>
-        <li class="flex items-center">
-          <el-icon color="green" class="mr-2"><CircleCheckFilled /></el-icon>
-          <span>{{ eventDetails.nationality }}</span>
-        </li>
-        <li v-for="item in eventDetails.checklist" :key="item" class="flex items-center">
-          <el-icon color="green" class="mr-2"><CircleCheckFilled /></el-icon>
-          <span>{{ item }}</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">สถานที่ยื่นคำขอ</h3>
-      <p class="flex items-center">
-        <el-icon class="mr-2"><Location /></el-icon>
-        <span>{{ eventDetails.location }}</span>
-      </p>
-      <p class="flex items-center mt-2">
-        <el-icon class="mr-2"><Clock /></el-icon>
-        <span>เวลาทำการ: {{ eventDetails.time }}</span>
-      </p>
+    <div class="mt-8 space-y-3 pb-16">
+      <el-button type="primary" size="large" class="w-full !bg-gray-800 !border-gray-800">
+        จองคิว <el-icon class="ml-2"><ArrowRight /></el-icon>
+      </el-button>
+      <el-button size="large" class="w-full" style="margin-left: 0px"> ย้อนกลับ </el-button>
     </div>
   </div>
 </template>

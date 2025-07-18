@@ -4,6 +4,7 @@ import { useUserStore } from '@/stores/userStore'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Bell } from '@element-plus/icons-vue'
+import Process from '@/components/Process.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -85,14 +86,8 @@ const goBackToHome = () => {
 </script>
 
 <template>
-  <div class="p-4 bg-gray-50 min-h-screen">
-    <div class="flex items-center justify-between mb-6 px-4">
-      <div class="text-blue-600 font-bold">เริ่มต้น</div>
-      <div class="flex-grow h-1 bg-gray-200 mx-4 rounded-full relative">
-        <div class="absolute top-0 left-0 h-1 bg-blue-600 rounded-full" style="width: 20%"></div>
-      </div>
-      <div class="text-gray-400">สิ้นสุด</div>
-    </div>
+  <div class="container">
+    <Process :percent="20"></Process>
 
     <div v-if="event && userProfile" class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg">
       <div class="text-center mb-6">

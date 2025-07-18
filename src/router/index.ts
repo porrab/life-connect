@@ -1,4 +1,7 @@
+import BenefitCard from '@/components/BenefitCard.vue'
+import Benefits from '@/views/Benefits.vue'
 import EventDetail from '@/views/EventDetail.vue'
+import EventPreRegister from '@/views/EventPreRegister.vue'
 import Home from '@/views/Home.vue'
 import Kyc from '@/views/Kyc.vue'
 import Login from '@/views/Login.vue'
@@ -31,6 +34,19 @@ const router = createRouter({
       path: '/booking',
       name: 'Booking',
       component: Booking,
+    },
+    {
+      path: '/benefits',
+      name: 'Benefits',
+      component: Benefits,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/event/pre-register/:id',
+      name: 'EventPreRegister',
+      component: EventPreRegister,
+      props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: '/event/:id',

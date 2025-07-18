@@ -8,6 +8,7 @@ import Kyc from '@/views/Kyc.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
 import Register from '@/views/Register.vue'
+import UploadDocuments from '@/views/UploadDocuments.vue'
 import Booking from '@/views/ฺBooking.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -60,6 +61,13 @@ const router = createRouter({
       path: '/booking/:serviceId',
       name: 'Booking',
       component: BookingView,
+      props: true,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/upload-documents/:bookingId',
+      name: 'UploadDocuments',
+      component: UploadDocuments,
       props: true,
       meta: { requiresAuth: true },
     },

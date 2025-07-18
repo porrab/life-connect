@@ -98,26 +98,44 @@ const handleBooking = async () => {
   }
 
   isBooking.value = true
-  try {
-    const bookingData = {
+
+  if (import.meta.env.DEV) {
+    console.log('Booking Data:', {
       userId: userStore.userProfile.uid,
       serviceId: route.params.serviceId,
-      serviceName: 'เบี้ยยังชีพผู้สูงอายุ',
-      locationName: locationInfo.value.name,
       bookingDate: selectedDate.value,
       bookingTime: selectedTime.value,
-      status: 'confirmed',
-      createdAt: serverTimestamp(),
-    }
+    })
 
-    const docRef = await addDoc(collection(db, 'bookings'), bookingData)
-    console.log('Document written with ID: ', docRef.id)
-    ElMessage.success('ยืนยันการจองสำเร็จ!')
-  } catch (error) {
-    console.error(error)
-    ElMessage.error('เกิดข้อผิดพลาดในการจองคิว')
-  } finally {
-    isBooking.value = false
+    setTimeout(() => {
+      ElMessage.success('ยืนยันการจองสำเร็จ!')
+      router.push({ name: 'UploadDocuments', params: { bookingId: 'mock-booking-id' } })
+      isBooking.value = false
+    }, 1500)
+  } else {
+    try {
+      const bookingData = {
+        userId: userStore.userProfile.uid,
+        serviceId: route.params.serviceId,
+        serviceName: 'เบี้ยยังชีพผู้สูงอายุ',
+        locationName: locationInfo.value.name,
+        bookingDate: selectedDate.value,
+        bookingTime: selectedTime.value,
+        status: 'confirmed',
+        createdAt: serverTimestamp(),
+      }
+
+      const docRef = await addDoc(collection(db, 'bookings'), bookingData)
+      console.log('Document written with ID: ', docRef.id)
+      ElMessage.success('ยืนยันการจองสำเร็จ!')
+
+      router.push({ name: 'UploadDocuments', params: { bookingId: docRef.id } })
+    } catch (error) {
+      console.error(error)
+      ElMessage.error('เกิดข้อผิดพลาดในการจองคิว')
+    } finally {
+      isBooking.value = false
+    }
   }
 }
 </script>

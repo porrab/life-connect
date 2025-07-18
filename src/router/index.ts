@@ -1,5 +1,6 @@
 import BenefitCard from '@/components/BenefitCard.vue'
 import Benefits from '@/views/Benefits.vue'
+import BookingConfirmation from '@/views/BookingConfirmation.vue'
 import BookingView from '@/views/BookingView.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import EventPreRegister from '@/views/EventPreRegister.vue'
@@ -68,6 +69,13 @@ const router = createRouter({
       path: '/upload-documents/:bookingId',
       name: 'UploadDocuments',
       component: UploadDocuments,
+      props: true,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/booking-confirmation/:bookingId',
+      name: 'BookingConfirmation',
+      component: BookingConfirmation,
       props: true,
       meta: { requiresAuth: true },
     },

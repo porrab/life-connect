@@ -1,10 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import DocumentItem from '@/components/DocumentItem.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
+import Process from '@/components/Process.vue'
+import Heading from '@/components/Heading.vue'
 
 const router = useRouter()
+const route = useRoute()
 
 const documents = ref([
   { id: 1, title: 'บัตรประชาชน (หน้า)', description: 'จำเป็น' },
@@ -13,13 +16,20 @@ const documents = ref([
   { id: 4, title: 'สมุดบัญชีธนาคาร (หน้าแรก)', description: 'จำเป็น' },
 ])
 
-const goToNextStep = () => {}
+const goToNextStep = () => {
+  const bookingId = route.params.bookingId as string
+  router.push({ name: 'BookingConfirmation', params: { bookingId: bookingId } })
+}
 </script>
 
 <template>
-  <div class="p-4 bg-gray-50 min-h-screen">
-    <h1 class="text-2xl font-bold text-gray-800 mb-2">อัปโหลดเอกสาร</h1>
-    <p class="text-gray-500 mb-6">กรุณาถ่ายรูปและอัปโหลดเอกสารให้ครบถ้วน</p>
+  <div class="container">
+    <Process :percent="80" class="mb-5"></Process>
+    <Heading
+      class="mb-5"
+      :head="'อัปโหลดเอกสาร'"
+      :description="'กรุณาถ่ายรูปและอัปโหลดเอกสารให้ครบถ้วน'"
+    ></Heading>
 
     <div class="space-y-4">
       <DocumentItem
@@ -44,7 +54,9 @@ const goToNextStep = () => {}
         ดำเนินการต่อ
         <el-icon class="ml-2"><ArrowRight /></el-icon>
       </el-button>
-      <el-button @click="router.go(-1)" size="large" class="w-full">ย้อนกลับ</el-button>
+      <el-button @click="router.go(-1)" size="large" class="w-full" style="margin-left: 0px"
+        >ย้อนกลับ</el-button
+      >
     </div>
   </div>
 </template>

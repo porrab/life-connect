@@ -12,8 +12,9 @@ const db = getFirestore()
 const isLoading = ref(false)
 const bookingDetails = ref<any>(null)
 
-const formatThaiDate = (dateObj: Date) => {
-  return new Date(dateObj).toLocaleDateString('th-TH', {
+const formatThaiDate = (dateString: string) => {
+  const dateObj = new Date(dateString)
+  return dateObj.toLocaleDateString('th-TH', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -44,7 +45,6 @@ onMounted(async () => {
       bookingDetails.value = {
         ...data,
         bookingId: docSnap.id,
-        bookingDate: data.bookingDate.toDate(),
       }
     } else {
       console.error('No such document!')
@@ -102,7 +102,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="mt-8">
+      <div class="mt-8 mb-15">
         <el-button
           @click="router.push({ name: 'Home' })"
           size="large"

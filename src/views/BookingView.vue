@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Loader } from '@googlemaps/js-api-loader'
 import { ElMessage } from 'element-plus'
 import { Location, ArrowRight } from '@element-plus/icons-vue'
 import Heading from '@/components/Heading.vue'
 import Process from '@/components/Process.vue'
 import { useUserStore } from '@/stores/userStore'
-import { addDoc, collection, getFirestore, serverTimestamp } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+  doc,
+} from 'firebase/firestore'
+import { formatDate } from '@/utils/notificationEngine'
 
 const router = useRouter()
 const route = useRoute()
@@ -15,10 +25,11 @@ const userStore = useUserStore()
 const db = getFirestore()
 
 const isBooking = ref(false)
+const selectedDate = ref(formatDate(new Date()))
+const selectedTime = ref('')
+const bookedTimes = ref<string[]>([])
 
 const mapDiv = ref<HTMLElement | null>(null)
-const selectedDate = ref(new Date())
-const selectedTime = ref('')
 
 const locationInfo = ref({
   name: 'สำนักงานเขตบางรัก',
@@ -26,12 +37,13 @@ const locationInfo = ref({
   position: { lat: 13.7274, lng: 100.5255 },
 })
 
-const timeSlots = ref([
-  { value: '09:00', label: '09:00 - 09:30 น.' },
-  { value: '09:30', label: '09:30 - 10:00 น.' },
-  { value: '10:00', label: '10:00 - 10:30 น.', disabled: true },
-  { value: '10:30', label: '10:30 - 11:00 น.' },
-])
+const timeSlots = computed(() => {
+  const slot = []
+  for (let hour = 9; hour <= 17; hour++) {
+    slot.push(`${String(hour).padStart(2, '0')}:00`)
+  }
+  return slot
+})
 
 onMounted(async () => {
   const apiKey = import.meta.env.VITE_Maps_API_KEY
@@ -83,8 +95,8 @@ const calendarAttrs = computed(() => [
 ])
 
 const handleDayClick = (day: any) => {
-  selectedDate.value = day.date
-  console.log('วันที่ถูกเลือกใหม่:', selectedDate.value)
+  selectedDate.value = formatDate(day.date)
+  console.log(selectedDate.value)
 }
 
 const handleBooking = async () => {
@@ -92,8 +104,10 @@ const handleBooking = async () => {
     ElMessage.warning('กรุณาเลือกวันและเวลาให้ครบถ้วน')
     return
   }
-  if (!userStore.userProfile) {
+
+  if (!userStore.isLoggedIn || !userStore.userProfile) {
     ElMessage.error('ไม่พบข้อมูลผู้ใช้ กรุณาล็อกอินใหม่')
+    router.push('/login')
     return
   }
 
@@ -124,6 +138,8 @@ const handleBooking = async () => {
         status: 'confirmed',
         createdAt: serverTimestamp(),
       }
+      console.log('Data to be sent:', bookingData)
+      console.log('Current User UID:', userStore.userProfile?.uid)
 
       const docRef = await addDoc(collection(db, 'bookings'), bookingData)
       console.log('Document written with ID: ', docRef.id)
@@ -138,6 +154,43 @@ const handleBooking = async () => {
     }
   }
 }
+
+const fetchBookedTime = async (date: string) => {
+  if (!date) return
+
+  console.log(`Fetching bookings for date: ${date}`)
+  bookedTimes.value = []
+  const bookingsCol = collection(db, 'bookings')
+  const q = query(
+    bookingsCol,
+    where('serviceId', '==', route.params.serviceId),
+    where('bookingDate', '==', date),
+  )
+
+  try {
+    const querySnapshot = await getDocs(q)
+    const times: string[] = []
+    querySnapshot.forEach((doc) => {
+      times.push(doc.data().bookingTime)
+    })
+    bookedTimes.value = times
+    console.log('Booked times:', bookedTimes.value)
+  } catch (error) {
+    console.error('Error fetching booked times:', error)
+    ElMessage.error('ไม่สามารถโหลดข้อมูลการจองได้')
+  }
+}
+
+watch(
+  selectedDate,
+  (newDate) => {
+    if (newDate) {
+      selectedTime.value = ''
+      fetchBookedTime(newDate)
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -173,17 +226,17 @@ const handleBooking = async () => {
         <el-select v-model="selectedTime" placeholder="โปรดเลือกเวลา" size="large" class="w-full">
           <el-option
             v-for="item in timeSlots"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            :disabled="item.disabled"
+            :key="item"
+            :label="item"
+            :value="item"
+            :disabled="bookedTimes.includes(item)"
           />
         </el-select>
       </div>
 
       <div class="mb-5">
         <h3 class="font-semibold mb-2 text-gray-700">วัน/เวลาที่จอง</h3>
-        <p>{{ selectedDate.toLocaleDateString() }} - {{ selectedTime }}</p>
+        <p>{{ selectedDate }} - {{ selectedTime }}</p>
       </div>
 
       <div class="space-y-3 pb-4">

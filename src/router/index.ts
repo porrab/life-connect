@@ -1,17 +1,17 @@
-import BenefitCard from '@/components/BenefitCard.vue'
-import Benefits from '@/views/Benefits.vue'
-import BookingConfirmation from '@/views/BookingConfirmation.vue'
-import BookingView from '@/views/BookingView.vue'
-import EventDetail from '@/views/EventDetail.vue'
-import EventPreRegister from '@/views/EventPreRegister.vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/userStore'
+import { getAuth } from 'firebase/auth'
+
 import Home from '@/views/Home.vue'
-import Kyc from '@/views/Kyc.vue'
+import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
-import Register from '@/views/Register.vue'
+import Kyc from '@/views/Kyc.vue'
+import Benefits from '@/views/Benefits.vue'
+import EventPreRegister from '@/views/EventPreRegister.vue'
+import EventDetail from '@/views/EventDetail.vue'
 import UploadDocuments from '@/views/UploadDocuments.vue'
-import Booking from '@/views/ฺBooking.vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import BookingConfirmation from '@/views/BookingConfirmation.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,13 +31,8 @@ const router = createRouter({
       name: 'Login',
       component: Login,
     },
-    { path: '/profile', name: 'Profile', component: Profile },
+    { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
     { path: '/kyc', name: 'Kyc', component: Kyc, meta: { requiresAuth: true } },
-    {
-      path: '/booking',
-      name: 'Booking',
-      component: Booking,
-    },
     {
       path: '/benefits',
       name: 'Benefits',
@@ -60,10 +55,21 @@ const router = createRouter({
     },
     {
       path: '/booking/:serviceId',
-      name: 'Booking',
-      component: BookingView,
-      props: true,
+      name: 'BookingService',
+      component: () => import('@/views/BookingView.vue'),
       meta: { requiresAuth: true },
+
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const auth = getAuth()
+        const currentUser = auth.currentUser
+
+        if (currentUser && !userStore.userProfile) {
+          console.log('Fetching user profile before entering route...')
+          await userStore.fetchUserProfile()
+        }
+        next()
+      },
     },
     {
       path: '/upload-documents/:bookingId',

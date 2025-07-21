@@ -8,7 +8,8 @@ export const useUserStore = defineStore('user', () => {
   const userProfile = ref<UserProfile | null>(null)
   const isLoggedIn = ref(false)
 
-  async function fetchUserProfile() {
+
+  async function fetchUserProfile(): Promise<void> {
     const auth = getAuth()
     const user = auth.currentUser
 
@@ -21,6 +22,7 @@ export const useUserStore = defineStore('user', () => {
       if (docSnap.exists()) {
         const data = docSnap.data()
 
+        
         if (data.dateOfBirth && data.dateOfBirth instanceof Timestamp) {
           const date = data.dateOfBirth.toDate()
           const year = date.getFullYear()
@@ -28,29 +30,35 @@ export const useUserStore = defineStore('user', () => {
           const day = ('0' + date.getDate()).slice(-2)
           data.dateOfBirth = `${year}-${month}-${day}`
         }
-        userProfile.value = data as UserProfile
+        
+        userProfile.value = { uid: user.uid, ...data } as UserProfile
+
       } else {
-        console.log('No user in db')
+        console.log('No user profile found in Firestore for UID:', user.uid)
+        userProfile.value = null 
       }
     } else {
       isLoggedIn.value = false
       userProfile.value = null
       if (import.meta.env.DEV) {
         userProfile.value = {
-          uid: '1',
+          uid: 'dev-1',
           firstName: 'ห่าน (ทดสอบ)',
           lastName: 'รักดี',
           email: 'test@example.com',
           dateOfBirth: '1960-01-01',
           isVerified: false,
         }
+        isLoggedIn.value = true;
       }
     }
   }
+
   function setUserAsVerified() {
     if (userProfile.value) {
       userProfile.value.isVerified = true
     }
   }
+
   return { userProfile, isLoggedIn, fetchUserProfile, setUserAsVerified }
 })

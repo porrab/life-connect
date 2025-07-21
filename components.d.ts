@@ -22,7 +22,6 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTag: typeof import('element-plus/es')['ElTag']
-    ElTimeSelect: typeof import('element-plus/es')['ElTimeSelect']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Heading: typeof import('./src/components/Heading.vue')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']

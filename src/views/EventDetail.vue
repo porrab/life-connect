@@ -112,7 +112,7 @@ const eventDetails = computed(() => {
 
     <div class="mt-8 space-y-3 pb-16">
       <el-button
-        @click="router.push({ name: 'Booking', params: { serviceId: 'elderly_allowance' } })"
+        @click="router.push({ name: 'BookingService', params: { serviceId: 'elderly_allowance' } })"
         type="primary"
         size="large"
         class="w-full !bg-gray-800 !border-gray-800"

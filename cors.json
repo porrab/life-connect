@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://live-connect-fa8ad.web.app"],
+    "method": ["GET", "POST", "PUT"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]

@@ -24,6 +24,8 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Heading: typeof import('./src/components/Heading.vue')['default']
+    KycCamera: typeof import('./src/components/KycCamera.vue')['default']
+    KycForm: typeof import('./src/components/KycForm.vue')['default']
     Navbar: typeof import('./src/components/Navbar.vue')['default']
     Process: typeof import('./src/components/Process.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

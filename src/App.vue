@@ -13,15 +13,13 @@ onMounted(() => {
     userStore.fetchUserProfile()
   })
 })
-
-
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
     <Navbar></Navbar>
 
-    <router-view></router-view>
+    <router-view class="mb-20"></router-view>
     <Footer></Footer>
   </div>
 </template>

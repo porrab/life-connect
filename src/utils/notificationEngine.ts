@@ -1,6 +1,6 @@
 import { type UserProfile } from '@/types/user'
 
-function calculateAge(dateOfBirth: string): number {
+export function calculateAge(dateOfBirth: string): number {
   const birthDate = new Date(dateOfBirth)
   const today = new Date()
   let age = today.getFullYear() - birthDate.getFullYear()

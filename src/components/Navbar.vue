@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/userStore'
 import { Bell } from '@element-plus/icons-vue'
+import { computed } from 'vue'
 
 const userStore = useUserStore()
+const profilePictureUrl = computed(() => {
+  if (userStore.userProfile?.kycImageUrl) {
+    return userStore.userProfile.kycImageUrl
+  }
+  return 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+})
 </script>
 
 <template>
@@ -17,9 +24,7 @@ const userStore = useUserStore()
     <div class="flex items-center space-x-4">
       <el-button :icon="Bell" circle />
       <span>{{ userStore.userProfile?.firstName }}</span>
-      <router-link :to="{ name: 'Profile' }"
-        ><el-avatar src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-      /></router-link>
+      <router-link :to="{ name: 'Profile' }"><el-avatar :src="profilePictureUrl" /></router-link>
     </div>
   </header>
 </template>

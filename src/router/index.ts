@@ -6,12 +6,12 @@ import Home from '@/views/Home.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
 import Profile from '@/views/Profile.vue'
-import Kyc from '@/views/Kyc.vue'
 import Benefits from '@/views/Benefits.vue'
 import EventPreRegister from '@/views/EventPreRegister.vue'
 import EventDetail from '@/views/EventDetail.vue'
 import UploadDocuments from '@/views/UploadDocuments.vue'
 import BookingConfirmation from '@/views/BookingConfirmation.vue'
+import KycView from '@/views/KycView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,7 +32,7 @@ const router = createRouter({
       component: Login,
     },
     { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
-    { path: '/kyc', name: 'Kyc', component: Kyc, meta: { requiresAuth: true } },
+    { path: '/kyc', name: 'Kyc', component: KycView, meta: { requiresAuth: true } },
     {
       path: '/benefits',
       name: 'Benefits',

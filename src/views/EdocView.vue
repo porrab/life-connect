@@ -18,7 +18,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage'
-import { ElMessage, ElLoading, type UploadFile } from 'element-plus'
+import { ElMessage, ElLoading, type UploadFile, ElMessageBox } from 'element-plus'
 import { Search, UploadFilled, Plus } from '@element-plus/icons-vue'
 import DocumentItem from '@/components/DocumentItem.vue'
 
@@ -96,18 +96,37 @@ const handleDelete = async (docId: string, storagePath: string) => {
   if (!userStore.userProfile?.uid) return
 
   try {
-    // 1. Delete from Firestore
-    await deleteDoc(doc(db, 'users', userStore.userProfile.uid, 'documents', docId))
+    await ElMessageBox.confirm(
+      'คุณแน่ใจหรือไม่ว่าต้องการลบเอกสารนี้? การกระทำนี้ไม่สามารถย้อนกลับได้',
+      'ยืนยันการลบ',
+      {
+        confirmButtonText: 'ลบ',
+        cancelButtonText: 'ยกเลิก',
+        type: 'warning',
+        center: true,
+      },
+    )
+    const loading = ElLoading.service({ text: 'กำลังลบเอกสาร...' })
+    try {
+      // 1. Delete from Firestore
+      await deleteDoc(doc(db, 'users', userStore.userProfile.uid, 'documents', docId))
 
-    // 2. Delete from Storage
-    const fileRef = storageRef(storage, storagePath)
-    await deleteObject(fileRef)
+      // 2. Delete from Storage
+      const fileRef = storageRef(storage, storagePath)
+      await deleteObject(fileRef)
 
-    ElMessage.success('ลบเอกสารสำเร็จ!')
-    await fetchDocuments() // Refresh the list
-  } catch (error) {
-    console.error('Delete failed:', error)
-    ElMessage.error('ลบเอกสารไม่สำเร็จ')
+      ElMessage.success('ลบเอกสารสำเร็จ!')
+      await fetchDocuments() // Refresh the list
+    } catch (error) {
+      console.error('Delete failed:', error)
+      ElMessage.error('ลบเอกสารไม่สำเร็จ')
+    } finally {
+      loading.close()
+    }
+  } catch (action) {
+    if (action === 'cancel') {
+      ElMessage.info('การลบถูกยกเลิก')
+    }
   }
 }
 watch(

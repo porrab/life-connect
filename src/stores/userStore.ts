@@ -1,5 +1,5 @@
 import { getAuth } from 'firebase/auth'
-import { doc, getDoc, getFirestore, Timestamp } from 'firebase/firestore'
+import { doc, DocumentSnapshot, getDoc, getFirestore, Timestamp } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { type UserProfile } from '@/types/user'
@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const userProfile = ref<UserProfile | null>(null)
   const isLoggedIn = ref(false)
 
-  async function fetchUserProfile(): Promise<void> {
+  async function fetchUserProfile(): Promise<DocumentSnapshot | null> {
     const auth = getAuth()
     const user = auth.currentUser
 
@@ -34,6 +34,7 @@ export const useUserStore = defineStore('user', () => {
         console.log('No user profile found in Firestore for UID:', user.uid)
         userProfile.value = null
       }
+      return docSnap
     } else {
       isLoggedIn.value = false
       userProfile.value = null
@@ -53,6 +54,7 @@ export const useUserStore = defineStore('user', () => {
         }
         isLoggedIn.value = true
       }
+      return Promise.resolve(null)
     }
   }
 

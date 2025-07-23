@@ -66,7 +66,7 @@ const router = createRouter({
 
         if (currentUser && !userStore.userProfile) {
           console.log('Fetching user profile before entering route...')
-          await userStore.fetchUserProfile()
+          await userStore.initializeUser()
         }
         next()
       },

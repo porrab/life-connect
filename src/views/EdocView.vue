@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
 import {
@@ -28,7 +28,6 @@ const db = getFirestore()
 const storage = getStorage()
 
 const documents = ref<any[]>([])
-const isLoading = ref(true)
 const searchQuery = ref('')
 
 const filteredDocuments = computed(() => {
@@ -42,7 +41,6 @@ const filteredDocuments = computed(() => {
 
 const fetchDocuments = async () => {
   if (!userStore.userProfile?.uid) return
-  isLoading.value = true
   try {
     const docsCollection = collection(db, 'users', userStore.userProfile.uid, 'documents')
     const querySnapshot = await getDocs(docsCollection)
@@ -50,8 +48,6 @@ const fetchDocuments = async () => {
   } catch (error) {
     console.error('Error fetching documents:', error)
     ElMessage.error('ไม่สามารถโหลดข้อมูลเอกสารได้')
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -114,10 +110,15 @@ const handleDelete = async (docId: string, storagePath: string) => {
     ElMessage.error('ลบเอกสารไม่สำเร็จ')
   }
 }
-
-onMounted(() => {
-  fetchDocuments()
-})
+watch(
+  () => userStore.isLoading,
+  (loading) => {
+    if (loading === false && userStore.userProfile) {
+      fetchDocuments()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -156,7 +157,7 @@ onMounted(() => {
       />
 
       <h2 class="text-xl font-semibold text-gray-800 mb-4">เอกสารของคุณ</h2>
-      <div v-if="isLoading" class="text-center p-8">
+      <div v-if="userStore.isLoading" class="text-center p-8">
         <p>กำลังโหลด...</p>
       </div>
       <div v-else-if="filteredDocuments.length > 0" class="space-y-3">

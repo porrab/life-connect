@@ -10,28 +10,13 @@ import '@/firebase.ts'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useUserStore } from './stores/userStore'
 import '@/firebase'
+const app = createApp(App)
 
-let app: any = null
+app.use(createPinia())
+const userStore = useUserStore()
+app.use(router)
+app.use(VCalender, {})
 
-onAuthStateChanged(getAuth(), async (user) => {
-  if (!app) {
-    app = createApp(App)
-    app.use(createPinia())
-    app.use(router)
-    app.use(VCalender, {})
-
-    await router.isReady()
-    app.mount('#app')
-  }
-
-  const userStore = useUserStore()
-  if (user) {
-    if (!userStore.userProfile) {
-      console.log('User detected, fetching profile...')
-      await userStore.fetchUserProfile()
-    }
-  } else {
-    userStore.userProfile = null
-    userStore.isLoggedIn = false
-  }
+userStore.initializeUser().then(() => {
+  app.mount('#app')
 })

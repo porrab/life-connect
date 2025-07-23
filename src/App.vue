@@ -10,7 +10,7 @@ const userStore = useUserStore()
 onMounted(() => {
   const auth = getAuth()
   onAuthStateChanged(auth, (user) => {
-    userStore.fetchUserProfile()
+    userStore.initializeUser()
   })
 })
 </script>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import {
@@ -40,7 +40,6 @@ const requiredDocs = ref([
 ])
 
 const existingDocuments = ref<any[]>([])
-const isLoading = ref(true)
 
 const displayDocuments = computed(() => {
   return requiredDocs.value.map((reqDoc) => {
@@ -64,15 +63,12 @@ const displayDocuments = computed(() => {
 
 const fetchExistingDocuments = async () => {
   if (!userStore.userProfile?.uid) return
-  isLoading.value = true
   try {
     const docsCollection = collection(db, 'users', userStore.userProfile.uid, 'documents')
     const querySnapshot = await getDocs(docsCollection)
     existingDocuments.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
   } catch (error) {
     console.error('Error fetching existing documents:', error)
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -154,9 +150,15 @@ const goToNextStep = async () => {
   }
 }
 
-onMounted(() => {
-  fetchExistingDocuments()
-})
+watch(
+  () => userStore.isLoading,
+  (loading) => {
+    if (loading === false && userStore.isLoggedIn) {
+      fetchExistingDocuments()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -168,7 +170,7 @@ onMounted(() => {
       :description="'กรุณาถ่ายรูปและอัปโหลดเอกสารให้ครบถ้วน'"
     ></Heading>
 
-    <div v-if="isLoading" class="text-center p-8">
+    <div v-if="userStore.isLoading" class="text-center p-8">
       <p>กำลังตรวจสอบเอกสารของคุณ...</p>
     </div>
     <div v-else class="space-y-4">

@@ -2,7 +2,7 @@
 import { useUserStore } from '@/stores/userStore'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { Check, Close, Edit } from '@element-plus/icons-vue'
+import { Check, Edit, ArrowRight, Document, Refresh, Bell } from '@element-plus/icons-vue'
 import { calculateAge } from '@/utils/notificationEngine'
 
 const userStore = useUserStore()
@@ -40,7 +40,7 @@ const formattedBirthDate = computed(() => {
 </script>
 
 <template>
-  <div class="p-4 bg-gray-100 min-h-screen">
+  <div class="container">
     <div v-if="user" class="max-w-md mx-auto">
       <div class="text-center pt-6 pb-4">
         <el-avatar :size="100" :src="profilePictureUrl" class="border-4 border-white shadow-lg" />
@@ -125,21 +125,64 @@ const formattedBirthDate = computed(() => {
           </div>
         </div>
 
-        <hr class="my-4" />
-
-        <div class="space-y-3 text-sm">
+        <div class="space-y-4 text-sm mt-5">
           <div class="flex items-start">
-            <el-icon class="mr-3 mt-1 text-gray-400"><HomeFilled /></el-icon>
             <div>
               <label class="text-gray-500">ที่อยู่</label>
               <p class="font-semibold text-gray-800">{{ user.address || 'ยังไม่มีข้อมูล' }}</p>
             </div>
           </div>
           <div class="flex items-start">
-            <el-icon class="mr-3 mt-1 text-gray-400"><Phone /></el-icon>
             <div>
               <label class="text-gray-500">เบอร์โทรศัพท์</label>
               <p class="font-semibold text-gray-800">{{ user.phoneNumber || 'ยังไม่มีข้อมูล' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-white p-5 rounded-xl shadow-md my-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+        @click="router.push({ name: 'Edoc' })"
+      >
+        <div class="flex items-center">
+          <el-icon class="mr-4 text-gray-500" :size="24"><Document /></el-icon>
+          <div>
+            <span class="font-semibold">e-doc</span>
+            <p class="text-sm text-gray-500">เอกสารอิเล็กทรอนิกส์</p>
+          </div>
+        </div>
+        <el-icon class="text-gray-400"><ArrowRight /></el-icon>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าความปลอดภัย</h2>
+        <div class="space-y-3">
+          <div
+            class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+          >
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-blue-500"><Refresh /></el-icon>
+              <div>
+                <p class="font-semibold">ประวัติการใช้ KYC</p>
+                <p class="text-xs text-gray-500">ดูประวัติการยืนยันตัวตนทั้งหมด</p>
+              </div>
+            </div>
+            <el-icon class="text-gray-400"><ArrowRight /></el-icon>
+          </div>
+
+          <div
+            class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+          >
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-red-500"><Bell /></el-icon>
+              <div>
+                <p class="font-semibold">การแจ้งเตือนความปลอดภัย</p>
+                <p class="text-xs text-gray-500">ตั้งค่าการแจ้งเตือน 2FA</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <el-tag type="danger" effect="dark" round class="mr-2">1</el-tag>
+              <el-icon class="text-gray-400"><ArrowRight /></el-icon>
             </div>
           </div>
         </div>

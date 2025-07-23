@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
 import { getAuth } from 'firebase/auth'
-
+import EdocView from '@/views/EdocView.vue'
 import Home from '@/views/Home.vue'
 import Register from '@/views/Register.vue'
 import Login from '@/views/Login.vue'
@@ -83,6 +83,12 @@ const router = createRouter({
       name: 'BookingConfirmation',
       component: BookingConfirmation,
       props: true,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/e-doc',
+      name: 'Edoc',
+      component: EdocView,
       meta: { requiresAuth: true },
     },
   ],

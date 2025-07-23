@@ -4,22 +4,20 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId} {
-      allow read: if request.auth != null;
+      allow read: if request.auth.uid != null;
       allow write: if request.auth.uid == userId;
+      
+      match /documents/{docId} {
+        allow read, write, delete: if request.auth.uid == userId;
+      }
     }
 
     match /bookings/{bookingId} {
-      // อนุญาตให้ผู้ใช้ที่ล็อกอินแล้วสร้างการจองได้
-      // โดย userId ในข้อมูลต้องตรงกับ uid ของตัวเอง
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      
-      // [เพิ่มส่วนนี้] อนุญาตให้ผู้ใช้ที่ล็อกอินแล้วทุกคน
-      // สามารถอ่านข้อมูลจาก collection `bookings` ได้
-      // เพื่อใช้ในการตรวจสอบเวลาที่ถูกจองไปแล้ว
       allow read: if request.auth != null;
-
-      // (ถ้าต้องการความปลอดภัยสูงขึ้น สามารถจำกัดให้เห็นเฉพาะการจองของตัวเองได้)
-      // allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      
+      // สามารถอัปเดต (update) เอกสารการจองที่เป็นของตัวเองได้
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
     }
   }
 }

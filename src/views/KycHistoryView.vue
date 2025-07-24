@@ -10,14 +10,14 @@ import { formatDateTime } from '@/utils/notificationEngine'
 const userStore = useUserStore()
 const router = useRouter()
 const db = getFirestore()
-
+const isLoadingHistory = ref(true)
 const kycHistory = ref<any[]>([])
 
 const fetchKycHistory = async () => {
   if (!userStore.userProfile?.uid) return
 
   try {
-    const historyCollection = collection(db, 'user', userStore.userProfile.uid, 'kycEvent')
+    const historyCollection = collection(db, 'users', userStore.userProfile.uid, 'kycEvent')
     const q = query(historyCollection, orderBy('timestamp', 'desc'))
     const querySnapshot = await getDocs(q)
     kycHistory.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
@@ -27,15 +27,13 @@ const fetchKycHistory = async () => {
   }
 }
 
-watch(
-  () => userStore.isLoading,
-  (loading) => {
-    if (loading === false && userStore.isLoggedIn) {
-      fetchKycHistory()
-    }
-  },
-  { immediate: true },
-)
+onMounted(() => {
+  if (userStore.isLoggedIn) {
+    fetchKycHistory()
+  } else {
+    isLoadingHistory.value = false
+  }
+})
 </script>
 
 <template>

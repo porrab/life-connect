@@ -156,15 +156,21 @@ const handleBooking = async () => {
 }
 
 const fetchBookedTime = async (date: string) => {
-  if (!date) return
+  if (!date || !userStore.userProfile?.uid) {
+    console.log('Skipping fetch: date or user profile not ready')
+    bookedTimes.value = []
+    return
+  }
 
-  console.log(`Fetching bookings for date: ${date}`)
+  console.log(`Fetching bookings for date: ${date} and user: ${userStore.userProfile.uid}`)
   bookedTimes.value = []
   const bookingsCol = collection(db, 'bookings')
+
   const q = query(
     bookingsCol,
     where('serviceId', '==', route.params.serviceId),
     where('bookingDate', '==', date),
+    where('userId', '==', userStore.userProfile.uid),
   )
 
   try {
@@ -180,16 +186,15 @@ const fetchBookedTime = async (date: string) => {
     ElMessage.error('ไม่สามารถโหลดข้อมูลการจองได้')
   }
 }
-
 watch(
-  selectedDate,
-  (newDate) => {
-    if (newDate) {
+  [selectedDate, () => userStore.userProfile],
+  ([newDate, userProfile]) => {
+    if (newDate && userProfile?.uid) {
       selectedTime.value = ''
       fetchBookedTime(newDate)
     }
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 )
 </script>
 

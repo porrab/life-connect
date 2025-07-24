@@ -158,6 +158,7 @@ const formattedBirthDate = computed(() => {
         <h2 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าความปลอดภัย</h2>
         <div class="space-y-3">
           <div
+            @click="router.push({ name: 'KycHistory' })"
             class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div class="flex items-center">

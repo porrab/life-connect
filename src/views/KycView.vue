@@ -4,7 +4,14 @@ import KycForm from '@/components/KycForm.vue'
 import KycCamera from '@/components/KycCamera.vue'
 import { ElLoading, ElMessage } from 'element-plus'
 import { getAuth } from 'firebase/auth'
-import { doc, getFirestore, updateDoc } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore'
 import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
@@ -48,7 +55,7 @@ const submitKYC = async () => {
     if (!user) throw new Error('ไม่พบข้อมูลผู้ใช้')
 
     const storage = getStorage()
-    const kycImageRef = storageRef(storage, 'kyc/${user.uid}/face.png')
+    const kycImageRef = storageRef(storage, `kyc/${user.uid}/face.png`)
     const base64Data = kycImageSnapshot.value.split(',')[1]
     const uploadResult = await uploadString(kycImageRef, base64Data, 'base64')
     const imageUrl = await getDownloadURL(uploadResult.ref)
@@ -60,6 +67,14 @@ const submitKYC = async () => {
       isVerified: true,
       kycImageUrl: imageUrl,
       kycVerifiedAt: new Date(),
+    })
+
+    const historyCollection = collection(db, 'users', user.uid, 'kycEvents')
+    await addDoc(historyCollection, {
+      serviceName: 'การยืนยันตัวตน (KYC)',
+      timestamp: serverTimestamp(),
+      ipAddress: '192.168.1.100', // การดึง IP Address จริงต้องทำจากฝั่ง Server
+      deviceInfo: navigator.userAgent,
     })
 
     userStore.setUserAsVerified(imageUrl)

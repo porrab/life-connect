@@ -12,6 +12,7 @@ import EventDetail from '@/views/EventDetail.vue'
 import UploadDocuments from '@/views/UploadDocuments.vue'
 import BookingConfirmation from '@/views/BookingConfirmation.vue'
 import KycView from '@/views/KycView.vue'
+import KycHistoryView from '@/views/KycHistoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,6 +90,13 @@ const router = createRouter({
       path: '/e-doc',
       name: 'Edoc',
       component: EdocView,
+      meta: { requiresAuth: true },
+    },
+    { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
+    {
+      path: '/kyc-history',
+      name: 'KycHistory',
+      component: KycHistoryView,
       meta: { requiresAuth: true },
     },
   ],

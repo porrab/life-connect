@@ -50,8 +50,7 @@ const statusInfo = computed(() => {
   <div class="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between">
     <div class="flex items-center overflow-hidden">
       <el-icon class="mr-4 text-gray-400 flex-shrink-0" :size="32">
-        <CircleCheck v-if="isUploaded" class="text-green-500" />
-        <Document v-else />
+        <Document />
       </el-icon>
       <div class="truncate">
         <p class="font-semibold text-gray-800 truncate">{{ document.fileName }}</p>

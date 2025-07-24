@@ -3,21 +3,29 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    match /bookings/{bookingId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
     match /users/{userId} {
-      allow read: if request.auth.uid != null;
-      allow write: if request.auth.uid == userId;
       
+      // อนุญาตให้เจ้าของโปรไฟล์เท่านั้นที่เขียนข้อมูลตัวเองได้
+      allow write: if request.auth.uid == userId;
+
+      // อนุญาตให้ผู้ใช้ที่ล็อกอินแล้วทุกคน อ่านข้อมูลโปรไฟล์พื้นฐานได้
+      allow read: if request.auth.uid != null;
+
+      // กฎสำหรับ Subcollection: documents
       match /documents/{docId} {
         allow read, write, delete: if request.auth.uid == userId;
       }
-    }
 
-    match /bookings/{bookingId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null;
-      
-      // สามารถอัปเดต (update) เอกสารการจองที่เป็นของตัวเองได้
-      allow update: if request.auth != null && resource.data.userId == request.auth.uid;
+      // กฎสำหรับ Subcollection: kycEvents
+      match /kycEvents/{eventId} {
+        allow read, create: if request.auth.uid == userId;
+      }
     }
   }
 }

@@ -18,6 +18,17 @@ export const formatDate = (date: Date): string => {
   return `${year}-${month}-${day}`
 }
 
+export const formatDateTime = (timestamp: any) => {
+  if (!timestamp?.seconds) return 'N/A'
+  return new Date(timestamp.seconds * 1000).toLocaleString('th-TH', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 export function getRelevantNotification(userProfile: UserProfile) {
   const age = calculateAge(userProfile.dateOfBirth)
 

@@ -192,6 +192,11 @@ watch(
         <p class="text-gray-500">ไม่พบเอกสาร</p>
       </div>
 
+      <div class="mt-6 bg-blue-50 text-blue-800 p-4 rounded-xl flex items-center text-sm">
+        <el-icon class="mr-3 flex-shrink-0" :size="20"><Lock /></el-icon>
+        <span>ความปลอดภัย: ข้อมูลทั้งหมดถูกเข้ารหัสและเก็บอย่างปลอดภัย</span>
+      </div>
+      
       <el-button @click="router.back()" size="large" class="w-full mt-8"> ย้อนกลับ </el-button>
     </div>
   </div>

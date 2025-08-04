@@ -7,52 +7,39 @@ service cloud.firestore {
     // ผู้ใช้ (Users)
     // =====================================================================
     match /users/{userId} {
-      // อนุญาตให้สร้างโปรไฟล์ได้เฉพาะเมื่อ userId ตรงกับ uid ของผู้ใช้ที่ล็อกอิน
-      // และยังไม่มีเอกสารโปรไฟล์ของผู้ใช้นั้นๆ อยู่
+      // ... (กฎเดิมของคุณ)
       allow create: if request.auth != null && request.auth.uid == userId;
+      allow read, update: if request.auth != null && request.auth.uid == userId; //
+      allow delete: if false; //
 
-      // อนุญาตให้อ่านและอัปเดตได้เฉพาะเจ้าของโปรไฟล์เท่านั้น
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-
-      // ไม่อนุญาตให้ลบโปรไฟล์ เพื่อรักษาข้อมูลอ้างอิง
-      allow delete: if false;
-
-      // --- คอลเลกชันย่อยภายใต้ User ---
-
-      // =====================================================================
-      // ประวัติ KYC (KYC Events)
-      // =====================================================================
+      // ... (กฎสำหรับ subcollections เดิมของคุณ)
       match /kycEvents/{eventId} {
-        // อนุญาตให้เจ้าของโปรไฟล์อ่านและสร้างประวัติ KYC ของตนเองได้เท่านั้น
-        allow read, create: if request.auth != null && request.auth.uid == userId;
-
-        // ไม่อนุญาตให้อัปเดตหรือลบประวัติ เพื่อความสมบูรณ์ของข้อมูล
-        allow update, delete: if false;
+        allow read, create: if request.auth != null && request.auth.uid == userId; //
+        allow update, delete: if false; //
       }
 
-      // =====================================================================
-      // (ตัวอย่าง) คอลเลกชันย่อยอื่นๆ เช่น 'settings'
-      // =====================================================================
-      // match /settings/{settingId} {
-      //   allow read, write: if request.auth != null && request.auth.uid == userId;
-      // }
+      match /documents/{documentId} {
+        // อนุญาตให้เจ้าของโปรไฟล์ อ่าน, สร้าง, และลบเอกสารของตนเองได้เท่านั้น
+        allow read, create, delete: if request.auth != null && request.auth.uid == userId;
+
+        // ไม่อนุญาตให้อัปเดตโดยตรง เพื่อป้องกันการแก้ไขข้อมูลโดยไม่ตั้งใจ
+        allow update: if false;
+      }
     }
 
     // =====================================================================
-    // (ตัวอย่าง) คอลเลกชันอื่นๆ เช่น 'posts'
-    // หากโปรเจกต์ของคุณมีส่วนอื่นๆ เช่น การโพสต์, แชท
-    // คุณสามารถเพิ่มกฎสำหรับคอลเลกชันเหล่านั้นที่นี่
+    // การจอง (Bookings) - (เพิ่มส่วนนี้เข้าไป)
     // =====================================================================
-    // match /posts/{postId} {
-    //   // อนุญาตให้ผู้ใช้ที่ล็อกอินแล้วทุกคนอ่านโพสต์ได้
-    //   allow read: if request.auth != null;
-    //
-    //   // อนุญาตให้สร้างโพสต์ได้ ถ้าข้อมูลที่ส่งมาถูกต้อง (เช่น มี userId ตรงกับคนสร้าง)
-    //   allow create: if request.auth != null && request.resource.data.authorId == request.auth.uid;
-    //
-    //   // อนุญาตให้เจ้าของโพสต์อัปเดตและลบโพสต์ของตนเองได้
-    //   allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
-    // }
+  match /bookings/{bookingId} {
+    // อนุญาตให้อ่านและอัปเดตได้ ถ้าเป็นเจ้าของข้อมูล
+    allow read, update: if request.auth != null && request.auth.uid == resource.data.userId;
+
+    // อนุญาตให้สร้างได้ ถ้าจะสร้างข้อมูลของตัวเอง
+    allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+
+    // ไม่อนุญาตให้ลบ
+    allow delete: if false;
+  }
 
   }
 }

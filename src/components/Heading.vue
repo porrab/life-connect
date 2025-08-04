@@ -6,7 +6,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="text-center">
+  <div class="text-center mb-5">
     <h1 class="text-2xl font-bold text-gray-800">
       <slot name="head">{{ head || 'Head' }}</slot>
     </h1>

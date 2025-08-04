@@ -172,6 +172,7 @@ const formattedBirthDate = computed(() => {
           </div>
 
           <div
+            @click="router.push({ name: 'SecurityNotification' })"
             class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <div class="flex items-center">

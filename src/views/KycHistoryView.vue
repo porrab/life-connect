@@ -1,138 +1,163 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/userStore'
-import { useRoute, useRouter } from 'vue-router'
-import { getFirestore, collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore'
+import { useRouter } from 'vue-router'
+import { getFirestore, collection, getDocs, orderBy, query, where } from 'firebase/firestore'
 import { ElMessage } from 'element-plus'
 import { formatDateTime } from '@/utils/notificationEngine'
-import { Calendar, Clock, Location, CircleCheckFilled, Loading } from '@element-plus/icons-vue'
+import { Calendar, Clock, Location, User, Refresh, ArrowLeft } from '@element-plus/icons-vue'
+import type { HistoryItem } from '@/types/user'
+import Heading from '@/components/Heading.vue'
 
 const userStore = useUserStore()
 const router = useRouter()
-const route = useRoute()
 const db = getFirestore()
-const isLoadingHistory = ref(true)
-const kycHistory = ref<any[]>([])
-const bookingDetails = ref<any>(null)
 const isLoading = ref(true)
+const historyItems = ref<HistoryItem[]>([])
 
-const statusInfo = computed(() => {
-  if (!bookingDetails.value?.status) {
-    return { text: 'ไม่ทราบสถานะ', type: 'info', icon: CircleCheckFilled }
-  }
-  switch (bookingDetails.value.status) {
-    case 'confirmed':
-      return { text: 'กำลังจอง', type: 'primary', icon: Loading }
-    case 'pending_verification':
-      return { text: 'รอตรวจสอบเอกสาร', type: 'warning', icon: Loading }
-    case 'verified':
-      return { text: 'ยืนยันสำเร็จ', type: 'success', icon: CircleCheckFilled }
-    default:
-      return { text: bookingDetails.value.status, type: 'info', icon: CircleCheckFilled }
-  }
-})
-
-const fetchKycHistory = async () => {
-  if (!userStore.userProfile?.uid) return
-
-  try {
-    const historyCollection = collection(db, 'users', userStore.userProfile.uid, 'kycEvent')
-    const q = query(historyCollection, orderBy('timestamp', 'desc'))
-    const querySnapshot = await getDocs(q)
-    kycHistory.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-  } catch (error) {
-    console.error('Error fetching KYC history:', error)
-    ElMessage.error('ไม่สามารถโหลดข้อมูลประวัติได้')
-  }
-}
-
-onMounted(async () => {
-  isLoading.value = true
-  const bookingId = route.params.bookingId as string
-  if (!bookingId) {
-    ElMessage.error('no booking')
+const fetchHistory = async () => {
+  if (!userStore.userProfile?.uid) {
+    ElMessage.error('ไม่พบข้อมูลผู้ใช้')
     return
   }
 
+  isLoading.value = true
   try {
-    const docRef = doc(db, 'bookings', bookingId)
-    const docSnap = await getDoc(docRef)
+    const uid = userStore.userProfile.uid
+    const combinedHistory: HistoryItem[] = []
 
-    if (docSnap.exists()) {
-      bookingDetails.value = {
-        id: docSnap.id,
-        ...docSnap.data(),
-      }
-    } else {
-      console.error('No such booking document!')
-      ElMessage.error('ไม่พบข้อมูลการจอง')
-    }
+    // Fetch KYC Events
+    const kycCollection = collection(db, 'users', uid, 'kycEvents')
+    const kycQuery = query(kycCollection, orderBy('timestamp', 'desc'))
+    const kycSnapshot = await getDocs(kycQuery)
+    kycSnapshot.forEach((doc) => {
+      const data = doc.data()
+      combinedHistory.push({
+        id: doc.id,
+        type: 'kyc',
+        timestamp: data.timestamp,
+        title: data.serviceName || 'การยืนยันตัวตน (KYC)',
+        description: `อุปกรณ์: ${data.deviceInfo}`,
+      })
+    })
+
+    // Fetch Bookings
+    const bookingsCollection = collection(db, 'bookings')
+    const bookingQuery = query(
+      bookingsCollection,
+      where('userId', '==', uid),
+      orderBy('createdAt', 'desc'),
+    )
+    const bookingSnapshot = await getDocs(bookingQuery)
+    bookingSnapshot.forEach((doc) => {
+      const data = doc.data()
+      combinedHistory.push({
+        id: doc.id,
+        type: 'booking',
+        timestamp: data.createdAt,
+        title: data.serviceName || 'การจองคิว',
+        description: `${data.locationName} - ${formatThaiDate(data.bookingDate)} ${data.bookingTime}`,
+        status: data.status,
+      })
+    })
+
+    // Sort all items by timestamp
+    historyItems.value = combinedHistory.sort((a, b) => {
+      const timeA = a.timestamp?.seconds || 0
+      const timeB = b.timestamp?.seconds || 0
+      return timeB - timeA
+    })
   } catch (error) {
-    console.error('Error fetching document:', error)
+    console.error('Error fetching history:', error)
+    ElMessage.error('ไม่สามารถโหลดข้อมูลประวัติได้')
   } finally {
     isLoading.value = false
   }
+}
+
+const getStatusInfo = (status: string) => {
+  switch (status) {
+    case 'confirmed':
+      return { text: 'จองสำเร็จ', type: 'primary' }
+    case 'pending_verification':
+      return { text: 'รอตรวจสอบ', type: 'warning' }
+    case 'verified':
+      return { text: 'ยืนยันแล้ว', type: 'success' }
+    default:
+      return { text: status, type: 'info' }
+  }
+}
+
+const formatThaiDate = (dateString: string) => {
+  if (!dateString) return ''
+  const date = new Date(dateString)
+  return date.toLocaleDateString('th-TH', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+onMounted(() => {
+  if (userStore.isLoggedIn) {
+    fetchHistory()
+  }
 })
+
+watch(
+  () => userStore.isLoggedIn,
+  (isLoggedIn) => {
+    if (isLoggedIn) {
+      fetchHistory()
+    }
+  },
+)
 </script>
 
 <template>
   <div class="p-4 bg-gray-50 min-h-screen">
-    <div v-if="isLoading" class="text-center mt-20">
-      <p>กำลังโหลดข้อมูลการจอง...</p>
-    </div>
+    <div class="max-w-xl mx-auto">
+      <Heading head="ประวัติการใช้ KYC" description="รายการยืนยันตัวตนทั้งหมด"></Heading>
 
-    <div v-else-if="bookingDetails" class="max-w-md mx-auto">
-      <div class="bg-white p-6 rounded-2xl shadow-md text-center">
-        <QrcodeVue :value="bookingDetails.id" :size="180" level="H" class="inline-block" />
-        <p class="text-gray-500 mt-4">หมายเลขการจอง</p>
-        <p class="text-2xl font-bold text-gray-800 tracking-wider">{{ bookingDetails.id }}</p>
+      <div v-if="isLoading" class="text-center mt-20">
+        <p>กำลังโหลดข้อมูล...</p>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-md my-5">
-        <ul class="space-y-4 text-gray-700">
-          <li class="flex items-center">
-            <el-icon class="mr-3 text-gray-400" :size="20"><Calendar /></el-icon>
-            <span>{{ formatDateTime(bookingDetails.bookingDate) }}</span>
-          </li>
-          <li class="flex items-center">
-            <el-icon class="mr-3 text-gray-400" :size="20"><Clock /></el-icon>
-            <span>{{ bookingDetails.bookingTime }}</span>
-          </li>
-          <li class="flex items-center">
-            <el-icon class="mr-3 text-gray-400" :size="20"><Location /></el-icon>
-            <span>{{ bookingDetails.locationName }}</span>
-          </li>
-        </ul>
+      <div v-else-if="historyItems.length > 0" class="space-y-4">
+        <el-card v-for="item in historyItems" :key="item.id" shadow="never" class="!rounded-xl">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="font-semibold text-gray-800">{{ item.title }}</p>
+              <p class="text-sm text-gray-500">{{ formatDateTime(item.timestamp) }}</p>
+              <p class="text-sm text-gray-600 mt-1">{{ item.description }}</p>
+            </div>
+            <div class="flex-shrink-0 ml-4">
+              <el-tag v-if="item.type === 'kyc'" type="info" effect="light">KYC</el-tag>
+              <el-tag
+                v-if="item.type === 'booking' && item.status"
+                :type="getStatusInfo(item.status).type"
+                effect="light"
+              >
+                {{ getStatusInfo(item.status).text }}
+              </el-tag>
+            </div>
+          </div>
+        </el-card>
       </div>
 
-      <div class="bg-white p-5 rounded-xl shadow-md">
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-semibold">สถานะ</h2>
-          <el-tag :type="statusInfo.type" effect="light" size="large">
-            <el-icon class="mr-1" :class="{ 'is-loading': statusInfo.icon === Loading }"
-              ><component :is="statusInfo.icon"
-            /></el-icon>
-            {{ statusInfo.text }}
-          </el-tag>
-        </div>
+      <div v-else class="text-center bg-white p-10 rounded-xl">
+        <p class="text-gray-500">ยังไม่มีประวัติการใช้งาน</p>
       </div>
-
-      <div class="mt-8">
-        <el-button
-          @click="router.push({ name: 'Home' })"
-          size="large"
-          type="primary"
-          class="w-full !bg-gray-800 !border-gray-800"
-        >
-          กลับหน้าหลัก
-        </el-button>
+      <div class="mt-6 bg-blue-50 text-blue-800 p-4 rounded-xl flex items-center text-sm">
+        <el-icon class="mr-3 flex-shrink-0" :size="20"><Lock /></el-icon>
+        <span>ความปลอดภัย: ข้อมูลทั้งหมดถูกเข้ารหัสและเก็บอย่างปลอดภัย</span>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.is-loading {
-  animation: rotating 2s linear infinite;
+.el-card {
+  border: 1px solid #e5e7eb;
 }
 </style>

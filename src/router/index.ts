@@ -13,6 +13,7 @@ import UploadDocuments from '@/views/UploadDocuments.vue'
 import BookingConfirmation from '@/views/BookingConfirmation.vue'
 import KycView from '@/views/KycView.vue'
 import KycHistoryView from '@/views/KycHistoryView.vue'
+import SecurityNotification from '@/views/SecurityNotification.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -97,6 +98,12 @@ const router = createRouter({
       path: '/kyc-history',
       name: 'KycHistory',
       component: KycHistoryView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/security-notification',
+      name: 'SecurityNotification',
+      component: SecurityNotification,
       meta: { requiresAuth: true },
     },
   ],

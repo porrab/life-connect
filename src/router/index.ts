@@ -1,19 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { getAuth } from 'firebase/auth'
-import EdocView from '@/views/EdocView.vue'
+// เราจะ import แค่ Home มาก่อน เพราะเป็นหน้าแรก
 import Home from '@/views/Home.vue'
-import Register from '@/views/Register.vue'
-import Login from '@/views/Login.vue'
-import Profile from '@/views/Profile.vue'
-import Benefits from '@/views/Benefits.vue'
-import EventPreRegister from '@/views/EventPreRegister.vue'
-import EventDetail from '@/views/EventDetail.vue'
-import UploadDocuments from '@/views/UploadDocuments.vue'
-import BookingConfirmation from '@/views/BookingConfirmation.vue'
-import KycView from '@/views/KycView.vue'
-import KycHistoryView from '@/views/KycHistoryView.vue'
-import SecurityNotification from '@/views/SecurityNotification.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,32 +14,42 @@ const router = createRouter({
     {
       path: '/register',
       name: 'Register',
-      component: Register,
+      component: () => import('@/views/Register.vue'),
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login,
+      component: () => import('@/views/Login.vue'),
     },
-    { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
-    { path: '/kyc', name: 'Kyc', component: KycView, meta: { requiresAuth: true } },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: () => import('@/views/Profile.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/kyc',
+      name: 'Kyc',
+      component: () => import('@/views/KycView.vue'),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/benefits',
       name: 'Benefits',
-      component: Benefits,
+      component: () => import('@/views/Benefits.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/event/pre-register/:id',
       name: 'EventPreRegister',
-      component: EventPreRegister,
+      component: () => import('@/views/EventPreRegister.vue'),
       props: true,
       meta: { requiresAuth: true },
     },
     {
       path: '/event/:id',
       name: 'EventDetail',
-      component: EventDetail,
+      component: () => import('@/views/EventDetail.vue'),
       props: true,
       meta: { requiresAuth: true },
     },
@@ -60,53 +58,56 @@ const router = createRouter({
       name: 'BookingService',
       component: () => import('@/views/BookingView.vue'),
       meta: { requiresAuth: true },
-
-      beforeEnter: async (to, from, next) => {
-        const userStore = useUserStore()
-        const auth = getAuth()
-        const currentUser = auth.currentUser
-
-        if (currentUser && !userStore.userProfile) {
-          console.log('Fetching user profile before entering route...')
-          await userStore.initializeUser()
-        }
-        next()
-      },
     },
     {
       path: '/upload-documents/:bookingId',
       name: 'UploadDocuments',
-      component: UploadDocuments,
+      component: () => import('@/views/UploadDocuments.vue'),
       props: true,
       meta: { requiresAuth: true },
     },
     {
       path: '/booking-confirmation/:bookingId',
       name: 'BookingConfirmation',
-      component: BookingConfirmation,
+      component: () => import('@/views/BookingConfirmation.vue'),
       props: true,
       meta: { requiresAuth: true },
     },
     {
       path: '/e-doc',
       name: 'Edoc',
-      component: EdocView,
+      component: () => import('@/views/EdocView.vue'),
       meta: { requiresAuth: true },
     },
-    { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
     {
       path: '/kyc-history',
       name: 'KycHistory',
-      component: KycHistoryView,
+      component: () => import('@/views/KycHistoryView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/security-notification',
       name: 'SecurityNotification',
-      component: SecurityNotification,
+      component: () => import('@/views/SecurityNotification.vue'),
       meta: { requiresAuth: true },
     },
   ],
+})
+
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+  if (!userStore.isAuthReady) {
+    await userStore.waitForAuthInit()
+  }
+
+  const requiresAuth = to.meta.requiresAuth
+  const isLoggedIn = userStore.isLoggedIn
+
+  if (requiresAuth && !isLoggedIn) {
+    next({ name: 'Login' })
+  } else {
+    next()
+  }
 })
 
 export default router

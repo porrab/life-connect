@@ -2,7 +2,8 @@
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { Warning, Check, Close } from '@element-plus/icons-vue'
+import { Warning, Check, Close, Iphone } from '@element-plus/icons-vue'
+import Heading from '@/components/Heading.vue'
 
 const router = useRouter()
 
@@ -50,14 +51,18 @@ const handleYesMe = () => {
     <div class="max-w-md mx-auto">
       <div class="text-center pt-8 pb-6">
         <el-icon :size="60" class="text-orange-400"><Warning /></el-icon>
-        <h1 class="text-2xl font-bold text-gray-800 mt-4">การแจ้งเตือนความปลอดภัย</h1>
-        <p class="text-gray-500">ตรวจพบการใช้งาน KYC ของคุณ</p>
+        <Heading
+          :head="'การแจ้งเตือนความปลอดภัย'"
+          :description="'ตรวจพบการใช้งาน KYC ของคุณ'"
+        ></Heading>
       </div>
 
       <div class="bg-red-50 p-6 rounded-2xl shadow-md border border-red-100 mb-6">
         <div class="flex items-start">
-          <div class="flex-shrink-0">
-            <el-icon class="text-red-500" :size="40"><Shield /></el-icon>
+          <div
+            class="flex-shrink-0 flex bg-[#BF4F4F] rounded-full p-1 w-15 h-15 justify-center items-center"
+          >
+            <el-icon :size="40"><Iphone class="text-white" /></el-icon>
           </div>
           <div class="ml-4">
             <h2 class="font-bold text-lg text-red-800">การเข้าใช้งานใหม่</h2>

@@ -1,27 +1,34 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
+import { useUserStore } from './stores/userStore'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
-import { useUserStore } from './stores/userStore'
-import { onMounted } from 'vue'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const userStore = useUserStore()
 
 onMounted(() => {
-  const auth = getAuth()
-  onAuthStateChanged(auth, (user) => {
-    userStore.initializeUser()
-  })
+  userStore.listenForAuthStateChanges()
 })
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <Navbar></Navbar>
+  <div v-if="userStore.isAuthReady" class="flex flex-col min-h-screen">
+    <Navbar />
+    <main class="flex-grow bg-gray-50">
+      <RouterView />
+    </main>
+    <Footer />
+  </div>
 
-    <router-view class="mb-20"></router-view>
-    <Footer></Footer>
+  <div v-else class="flex justify-center items-center min-h-screen bg-gray-50">
+    <div class="text-center">
+      <img src="@/assets/icon.png" alt="Live Connect Logo" class="h-12 w-auto mx-auto mb-4" />
+      <p class="text-gray-500">กำลังโหลด...</p>
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* You can add custom styling for your loading screen here */
+</style>

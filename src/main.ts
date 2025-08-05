@@ -13,10 +13,7 @@ import '@/firebase'
 const app = createApp(App)
 
 app.use(createPinia())
-const userStore = useUserStore()
 app.use(router)
 app.use(VCalender, {})
 
-userStore.initializeUser().then(() => {
-  app.mount('#app')
-})
+app.mount('#app')

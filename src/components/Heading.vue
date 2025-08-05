@@ -7,7 +7,7 @@ const props = defineProps<{
 
 <template>
   <div class="text-center mb-5">
-    <h1 class="text-2xl font-bold text-gray-800">
+    <h1 class="text-2xl font-bold">
       <slot name="head">{{ head || 'Head' }}</slot>
     </h1>
     <p class="text-sm text-gray-500">
@@ -16,4 +16,9 @@ const props = defineProps<{
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+h1,
+p {
+  color: #466baf;
+}
+</style>

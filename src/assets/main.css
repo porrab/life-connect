@@ -5,3 +5,7 @@
   background-color: var(--color-gray-50);
   min-height: 100vh;
 }
+
+.content-wrapper {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+}

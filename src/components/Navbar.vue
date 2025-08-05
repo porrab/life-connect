@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-import { ArrowDown, User, SwitchButton, Right } from '@element-plus/icons-vue'
+import { computed } from 'vue' // เพิ่ม computed
+import { ArrowDown, User, SwitchButton, Right, Bell } from '@element-plus/icons-vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const router = useRouter()
+
+const profilePictureUrl = computed(() => {
+  if (userStore.userProfile?.kycImageUrl) {
+    return userStore.userProfile.kycImageUrl
+  }
+  if (userStore.userProfile?.firstName) {
+    return `https://api.dicebear.com/8.x/initials/svg?seed=${userStore.userProfile.firstName}`
+  }
+  return ''
+})
 
 const handleLogout = async () => {
   try {
@@ -41,7 +52,7 @@ const handleCommand = (command: string | number | object) => {
 
 <template>
   <nav class="bg-white shadow-sm sticky top-0 z-50">
-    <div class="container mx-auto px-4">
+    <div class="content-wrapper">
       <div class="flex justify-between items-center h-16">
         <RouterLink to="/" class="flex items-center space-x-2">
           <img src="@/assets/icon.png" alt="Live Connect Logo" class="h-8 w-auto" />
@@ -49,11 +60,13 @@ const handleCommand = (command: string | number | object) => {
         </RouterLink>
 
         <div class="flex items-center">
+          <el-icon :size="20" class="mr-4"><Bell class="text-[#466BAF]" /></el-icon>
           <el-dropdown @command="handleCommand" trigger="click">
             <span
               class="flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-100 cursor-pointer transition-colors"
             >
-              <el-icon :size="22" class="text-gray-600"><User /></el-icon>
+              <el-avatar v-if="userStore.isLoggedIn" :size="40" :src="profilePictureUrl" />
+              <el-icon v-else :size="22" class="text-gray-600"><User /></el-icon>
             </span>
 
             <template #dropdown>
@@ -82,5 +95,10 @@ const handleCommand = (command: string | number | object) => {
 .el-dropdown-menu__item:not(.is-disabled):hover {
   background-color: #ecf5ff;
   color: #409eff;
+}
+
+.el-avatar {
+  width: 100%;
+  height: 100%;
 }
 </style>

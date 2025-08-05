@@ -7,8 +7,6 @@ import 'v-calendar/style.css'
 import App from './App.vue'
 import router from './router'
 import '@/firebase.ts'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { useUserStore } from './stores/userStore'
 import '@/firebase'
 const app = createApp(App)
 

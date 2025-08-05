@@ -43,12 +43,28 @@ export const useUserStore = defineStore('user', () => {
         const profile = await fetchUserProfile(user.uid)
         userProfile.value = profile
       } else {
-        userProfile.value = null
-      }
-      isLoading.value = false
-
-      if (!isAuthReady.value) {
-        isAuthReady.value = true
+        if (import.meta.env.DEV) {
+          userProfile.value = {
+            uid: 'dev-mode-user',
+            firstName: 'นักพัฒนา',
+            lastName: 'ทดสอบ',
+            email: 'dev@example.com',
+            dateOfBirth: '1999-01-01',
+            isVerified: true,
+            kycImageUrl:
+              'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
+            phoneNumber: '080-000-0000',
+            nationalId: '1234567890123',
+            gender: 'ชาย',
+            address: '123/45 ถนนนักพัฒนา เขตโค้ดดิ้ง กรุงเทพ 10240',
+          }
+        } else {
+          userProfile.value = null
+        }
+        isLoading.value = false
+        if (!isAuthReady.value) {
+          isAuthReady.value = true
+        }
       }
     })
   }

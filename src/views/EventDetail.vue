@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Clock,
@@ -16,6 +16,9 @@ import Heading from '@/components/Heading.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+const activeNames = ref('1')
+
 const eventDetails = computed(() => {
   return {
     title: 'เบี้ยยังชีพผู้สูงอายุ',
@@ -41,22 +44,17 @@ const eventDetails = computed(() => {
       'สมุดบัญชีธนาคาร (หน้าแรก)',
     ],
 
-    processTimeline: [
-      'บัตรประชาชนตัวจริง',
-      'สำเนาบัตรประชาชน (หน้า-หลัง)',
-      'สำเนาทะเบียนบ้าน',
-      'สมุดบัญชีธนาคาร (หน้าแรก)',
-    ],
+    processTimeline: ['ยื่นเอกสารและตรวจสอบคุณสมบัติ', 'ประกาศผลการพิจารณา', 'เริ่มรับเบี้ยยังชีพ'],
   }
 })
 </script>
 
 <template>
   <div class="container">
-    <Process :percent="40"></Process>
+    <Process :percent="25"></Process>
     <Heading
       class="mb-5"
-      :head="'เบี้ยเลี้ยงผุู้สูงอายุ'"
+      :head="'เบี้ยเลี้ยงผู้สูงอายุ'"
       :description="'สิทธิประโยชน์ที่คุณจะได้รับ'"
     ></Heading>
     <div class="bg-green-500 text-white p-6 rounded-2xl text-center shadow-lg mb-6">
@@ -67,49 +65,58 @@ const eventDetails = computed(() => {
       </div>
     </div>
 
-    <div class="space-y-4">
-      <div class="bg-white p-5 rounded-2xl shadow-sm">
-        <div class="flex items-center mb-3">
-          <el-icon class="mr-2 text-green-500" :size="24"><CircleCheckFilled /></el-icon>
-          <h3 class="text-lg font-semibold text-gray-800">เงื่อนไขการรับสิทธิ์</h3>
-        </div>
-        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
-          <li v-for="item in eventDetails.requirements" :key="item">{{ item }}</li>
-        </ul>
-      </div>
+    <div class="details-collapse">
+      <el-collapse v-model="activeNames" accordion>
+        <el-collapse-item name="1">
+          <template #title>
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-green-500" :size="20"><CircleCheckFilled /></el-icon>
+              <span class="text-base font-semibold text-gray-800">เงื่อนไขการรับสิทธิ์</span>
+            </div>
+          </template>
+          <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600 text-sm">
+            <li v-for="item in eventDetails.requirements" :key="item">{{ item }}</li>
+          </ul>
+        </el-collapse-item>
 
-      <div class="bg-white p-5 rounded-2xl shadow-sm">
-        <div class="flex items-center mb-3">
-          <el-icon class="mr-2 text-blue-500" :size="24"><Place /></el-icon>
-          <h3 class="text-lg font-semibold text-gray-800">สถานที่ยื่นคำขอ</h3>
-        </div>
-        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
-          <li>{{ eventDetails.locationDetails.place }}</li>
-          <li>{{ eventDetails.locationDetails.time }}</li>
-        </ul>
-      </div>
+        <el-collapse-item name="2">
+          <template #title>
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-blue-500" :size="20"><Place /></el-icon>
+              <span class="text-base font-semibold text-gray-800">สถานที่ยื่นคำขอ</span>
+            </div>
+          </template>
+          <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600 text-sm">
+            <li>{{ eventDetails.locationDetails.place }}</li>
+            <li>{{ eventDetails.locationDetails.time }}</li>
+          </ul>
+        </el-collapse-item>
 
-      <div class="bg-white p-5 rounded-2xl shadow-sm">
-        <div class="flex items-center mb-3">
-          <el-icon class="mr-2 text-orange-500" :size="24"><Files /></el-icon>
-          <h3 class="text-lg font-semibold text-gray-800">เอกสารที่ต้องใช้</h3>
-        </div>
-        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
-          <li v-for="item in eventDetails.documents" :key="item">{{ item }}</li>
-        </ul>
-      </div>
+        <el-collapse-item name="3">
+          <template #title>
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-orange-500" :size="20"><Files /></el-icon>
+              <span class="text-base font-semibold text-gray-800">เอกสารที่ต้องใช้</span>
+            </div>
+          </template>
+          <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600 text-sm">
+            <li v-for="item in eventDetails.documents" :key="item">{{ item }}</li>
+          </ul>
+        </el-collapse-item>
 
-      <div class="bg-white p-5 rounded-2xl shadow-sm">
-        <div class="flex items-center mb-3">
-          <el-icon class="mr-2 text-purple-500" :size="24"><Timer /></el-icon>
-          <h3 class="text-lg font-semibold text-gray-800">ระยะเวลาที่ใช้ดำเนินการ</h3>
-        </div>
-        <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600">
-          <li v-for="item in eventDetails.processTimeline" :key="item">{{ item }}</li>
-        </ul>
-      </div>
+        <el-collapse-item name="4">
+          <template #title>
+            <div class="flex items-center">
+              <el-icon class="mr-3 text-purple-500" :size="20"><Timer /></el-icon>
+              <span class="text-base font-semibold text-gray-800">ขั้นตอนและระยะเวลา</span>
+            </div>
+          </template>
+          <ul class="space-y-2 pl-8 list-disc list-inside text-gray-600 text-sm">
+            <li v-for="item in eventDetails.processTimeline" :key="item">{{ item }}</li>
+          </ul>
+        </el-collapse-item>
+      </el-collapse>
     </div>
-
     <div class="mt-8 space-y-3 pb-16">
       <el-button
         @click="router.push({ name: 'BookingService', params: { serviceId: 'elderly_allowance' } })"
@@ -126,4 +133,32 @@ const eventDetails = computed(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.details-collapse {
+  --el-collapse-border-color: transparent;
+  --el-collapse-header-height: 56px;
+}
+
+.details-collapse .el-collapse-item {
+  background-color: white;
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.details-collapse .el-collapse-item:last-child {
+  margin-bottom: 0;
+}
+
+:deep(.el-collapse-item__header) {
+  padding: 0 1.25rem;
+  border-radius: 1rem;
+}
+
+:deep(.el-collapse-item__wrap) {
+  border-radius: 1rem;
+}
+:deep(.el-collapse-item__content) {
+  padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+}
+</style>

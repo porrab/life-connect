@@ -163,7 +163,7 @@ watch(
 
 <template>
   <div class="container">
-    <Process :percent="80" class="mb-5"></Process>
+    <Process :percent="75" class="mb-5"></Process>
     <Heading
       class="mb-5"
       :head="'อัปโหลดเอกสาร'"

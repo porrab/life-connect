@@ -4,6 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 import QrcodeVue from 'qrcode.vue'
 import { Calendar, Clock, Location, Bell, Phone } from '@element-plus/icons-vue'
+import Heading from '@/components/Heading.vue'
+import Process from '@/components/Process.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -59,6 +61,11 @@ onMounted(async () => {
 
 <template>
   <div class="p-4 bg-gray-50 min-h-screen">
+    <Process :percent="100"></Process>
+    <Heading
+      :head="'QR Code สำหรับเช็คอิน'"
+      :description="'แสดง QR Code นี้เมื่อถึงสำนักงานเขต'"
+    ></Heading>
     <div v-if="isLoading" class="text-center mt-20">
       <p>กำลังโหลดข้อมูลการจอง...</p>
     </div>

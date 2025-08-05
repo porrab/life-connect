@@ -200,7 +200,7 @@ watch(
 
 <template>
   <div class="bg-gray-100 min-h-screen">
-    <Process :percent="60" class="mb-5"></Process>
+    <Process :percent="50" class="mb-5"></Process>
     <Heading :head="'จองคิว'" :description="'เลือกวันและเวลาที่สะดวก'" class="mb-5"></Heading>
     <div ref="mapDiv" class="w-full h-64 bg-gray-300"></div>
     <div class="bg-white p-6 rounded-t-3xl -mt-8 relative z-10 shadow-lg">

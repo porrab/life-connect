@@ -102,11 +102,16 @@ router.beforeEach(async (to, from, next) => {
 
   const requiresAuth = to.meta.requiresAuth
   const isLoggedIn = userStore.isLoggedIn
+  const isAuthPage = to.name === 'Login' || to.name === 'Register'
 
-  if (requiresAuth && !isLoggedIn && !import.meta.env.DEV) {
-    next({ name: 'Login' })
-  } else {
-    next()
+  if (isLoggedIn && isAuthPage) {
+    return next({ name: 'Home' })
+  }
+
+  if (requiresAuth && !isLoggedIn) {
+    if (!import.meta.env.DEV) {
+      return next({ name: 'Login' })
+    }
   }
 })
 

@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import { useUserStore } from './stores/userStore'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 
 const userStore = useUserStore()
-
-onMounted(() => {
-  userStore.listenForAuthStateChanges()
-})
 </script>
 
 <template>
@@ -29,6 +24,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-/* You can add custom styling for your loading screen here */
-</style>
+<style scoped></style>

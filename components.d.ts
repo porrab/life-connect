@@ -11,6 +11,7 @@ declare module 'vue' {
     BenefitCard: typeof import('./src/components/BenefitCard.vue')['default']
     DocumentItem: typeof import('./src/components/DocumentItem.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']

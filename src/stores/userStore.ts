@@ -52,8 +52,10 @@ export const useUserStore = defineStore('user', () => {
               uid: 'dev-mode-user',
               firstName: 'test',
               lastName: 'user',
+              dateOfBirth: '1950-05-05',
               englishName: 'test user',
               email: 'dev@example.com',
+              isVerified: false,
             }
           } else {
             userProfile.value = null

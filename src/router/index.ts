@@ -90,6 +90,11 @@ const router = createRouter({
       component: () => import('@/views/SecurityNotification.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      redirect: { name: 'Home' },
+    },
   ],
 })
 

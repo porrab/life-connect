@@ -46,10 +46,10 @@ export const useUserStore = defineStore('user', () => {
         if (import.meta.env.DEV) {
           userProfile.value = {
             uid: 'dev-mode-user',
-            firstName: 'นักพัฒนา',
+            firstName: 'dev',
             lastName: 'ทดสอบ',
             email: 'dev@example.com',
-            dateOfBirth: '1999-01-01',
+            dateOfBirth: '1800-01-01',
             isVerified: true,
             kycImageUrl:
               'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',

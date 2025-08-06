@@ -50,17 +50,10 @@ export const useUserStore = defineStore('user', () => {
           if (import.meta.env.DEV) {
             userProfile.value = {
               uid: 'dev-mode-user',
-              firstName: 'นักพัฒนา',
-              lastName: 'ทดสอบ',
+              firstName: 'test',
+              lastName: 'user',
+              englishName: 'test user',
               email: 'dev@example.com',
-              dateOfBirth: '1990-01-01',
-              isVerified: true,
-              kycImageUrl:
-                'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp',
-              phoneNumber: '080-000-0000',
-              nationalId: '1234567890123',
-              gender: 'ชาย',
-              address: '123/45 ถนนนักพัฒนา เขตโค้ดดิ้ง กรุงเทพ 10240',
             }
           } else {
             userProfile.value = null

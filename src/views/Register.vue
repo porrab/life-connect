@@ -12,8 +12,8 @@ const isLoading = ref(false)
 const formData = ref({
   firstName: '',
   lastName: '',
+  englishName: '',
   email: '',
-  dateOfBirth: '',
   password: '',
   confirmPassword: '',
 })
@@ -28,14 +28,15 @@ const validatePass2 = (rule: any, value: any, callback: any) => {
   }
 }
 
+// rules updated: added englishName, removed dateOfBirth
 const rules = ref<FormRules>({
   firstName: [{ required: true, message: 'กรุณากรอกชื่อ', trigger: 'blur' }],
   lastName: [{ required: true, message: 'กรุณากรอกนามสกุล', trigger: 'blur' }],
+  englishName: [{ required: true, message: 'กรุณากรอกชื่อภาษาอังกฤษ', trigger: 'blur' }],
   email: [
     { required: true, message: 'กรุณากรอกอีเมล', trigger: 'blur' },
     { type: 'email', message: 'รูปแบบอีเมลไม่ถูกต้อง', trigger: ['blur', 'change'] },
   ],
-  dateOfBirth: [{ required: true, message: 'กรุณาเลือกวันเกิด', trigger: 'change' }],
   password: [
     { required: true, message: 'กรุณากรอกรหัสผ่าน', trigger: 'blur' },
     { min: 6, message: 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร', trigger: 'blur' },
@@ -64,24 +65,26 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     )
     const user = userCredential.user
     const db = getFirestore()
+
+    // Firestore document updated: added englishName, removed dateOfBirth
     await setDoc(doc(db, 'users', user.uid), {
       firstName: formData.value.firstName,
       lastName: formData.value.lastName,
+      englishName: formData.value.englishName,
       email: formData.value.email,
-      dateOfBirth: formData.value.dateOfBirth,
       createdAt: new Date(),
     })
 
     ElNotification({
       title: 'สำเร็จ',
-      message: 'สมัครสมาชิกสำเร็จ!!!',
+      message: 'สมัครสมาชิกสำเร็จ!',
       type: 'success',
     })
     router.push('/')
   } catch (error: any) {
-    let message = 'Error occurred pls try again'
+    let message = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'
     if (error.code === 'auth/email-already-in-use') {
-      message = 'this email already in use'
+      message = 'อีเมลนี้ถูกใช้งานแล้ว'
     }
     ElMessage.error(message)
   } finally {
@@ -118,19 +121,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         </el-col>
       </el-row>
 
-      <el-form-item label="อีเมล" prop="email">
-        <el-input v-model="formData.email" placeholder="example@email.com" />
+      <el-form-item label="ชื่อ-นามสกุล (ภาษาอังกฤษ)" prop="englishName">
+        <el-input v-model="formData.englishName" placeholder="Full Name" />
       </el-form-item>
 
-      <el-form-item label="วันเกิด (age > 1966 check elder func)" prop="dateOfBirth" class="w-full">
-        <el-date-picker
-          v-model="formData.dateOfBirth"
-          type="date"
-          placeholder="เลือกวันเกิด"
-          format="DD/MM/YYYY"
-          value-format="YYYY-MM-DD"
-          class="w-full"
-        />
+      <el-form-item label="อีเมล" prop="email">
+        <el-input v-model="formData.email" placeholder="example@email.com" />
       </el-form-item>
 
       <el-form-item label="รหัสผ่าน" prop="password">

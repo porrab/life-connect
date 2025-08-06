@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/userStore'
-// เราจะ import แค่ Home มาก่อน เพราะเป็นหน้าแรก
 import Home from '@/views/Home.vue'
 
 const router = createRouter({
@@ -109,10 +108,10 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (requiresAuth && !isLoggedIn) {
-    if (!import.meta.env.DEV) {
-      return next({ name: 'Login' })
-    }
+    return next({ name: 'Login' })
   }
+
+  return next()
 })
 
 export default router

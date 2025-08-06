@@ -15,9 +15,10 @@ import {
 import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage'
 import { useUserStore } from '@/stores/userStore'
 import { useRouter } from 'vue-router'
+import FaceScanIntro from '@/components/FaceScanIntro.vue'
 
 const kycCameraRef = ref<InstanceType<typeof KycCamera> | null>(null)
-const currentStep = ref<'form' | 'camera'>('form')
+const currentStep = ref<'form' | 'face-intro' | 'camera'>('form')
 
 const kycData = ref<any>(null)
 const kycImageSnapshot = ref<string | null>(null)
@@ -28,7 +29,7 @@ const userStore = useUserStore()
 
 const onFormSubmit = (formData: any) => {
   kycData.value = formData
-  currentStep.value = 'camera'
+  currentStep.value = 'face-intro'
 }
 
 const handleRetake = () => {
@@ -73,7 +74,7 @@ const submitKYC = async () => {
     await addDoc(historyCollection, {
       serviceName: 'การยืนยันตัวตน (KYC)',
       timestamp: serverTimestamp(),
-      ipAddress: '192.168.1.100', // การดึง IP Address จริงต้องทำจากฝั่ง Server
+      ipAddress: '192.168.1.100',
       deviceInfo: navigator.userAgent,
     })
 
@@ -93,9 +94,17 @@ const submitKYC = async () => {
 <template>
   <div>
     <KycForm v-if="currentStep === 'form'" @submit-form="onFormSubmit" />
-
+    <FaceScanIntro
+      v-if="currentStep === 'face-intro'"
+      @next-step="currentStep = 'camera'"
+      @prev-step="currentStep = 'form'"
+    />
     <div v-if="currentStep === 'camera'">
-      <KycCamera ref="kycCameraRef" @capture-success="onCaptureSuccess" />
+      <KycCamera
+        ref="kycCameraRef"
+        @capture-success="onCaptureSuccess"
+        @back="currentStep = 'face-intro'"
+      />
 
       <div v-if="kycImageSnapshot" class="text-center mt-4 space-x-4">
         <el-button @click="handleRetake" size="large">ถ่ายใหม่</el-button>

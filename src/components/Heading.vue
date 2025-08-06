@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   head: string
-  description: string
+  description?: string
 }>()
 </script>
 
@@ -11,7 +11,7 @@ const props = defineProps<{
       <slot name="head">{{ head || 'Head' }}</slot>
     </h1>
     <p class="text-sm text-gray-500">
-      <slot name="description">{{ description || 'description' }}</slot>
+      <slot name="description">{{ description }}</slot>
     </p>
   </div>
 </template>

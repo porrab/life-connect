@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import Heading from './Heading.vue'
+import { ArrowLeft } from '@element-plus/icons-vue'
 
 const videoRef = ref<HTMLVideoElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const snapshot = ref<string | null>(null)
 let stream: MediaStream | null = null
-const emit = defineEmits(['capture-success'])
+const emit = defineEmits(['capture-success', 'back'])
 
 const startCamera = async () => {
   snapshot.value = null
@@ -71,11 +73,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="p-4 md:p-6 text-center">
-    <h1 class="text-2xl font-bold text-gray-800">ยืนยันตัวตนด้วยใบหน้า</h1>
-
-    <div class="max-w-md mx-auto mt-6">
-      <p v-if="!snapshot" class="text-gray-500 mb-4">กรุณาจัดใบหน้าให้อยู่ในกรอบและกดถ่ายรูป</p>
+  <div class="p-4 md:p-6">
+    <el-icon class="hover:cursor-pointer hover:bg-gray-200 rounded-full" @click="emit('back')"
+      ><ArrowLeft
+    /></el-icon>
+    <Heading :head="'ยืนยันตัวตนด้วยใบหน้า'"></Heading>
+    <div class="max-w-md mx-auto mt-6 text-center">
+      <p v-if="!snapshot" class="text-[#466baf] mb-4">กรุณาจัดใบหน้าให้อยู่ในกรอบและกดถ่ายรูป</p>
 
       <div
         v-show="!snapshot"
@@ -83,11 +87,16 @@ onUnmounted(() => {
       >
         <video ref="videoRef" autoplay playsinline class="w-full h-full object-cover"></video>
       </div>
-
+      <div
+        v-if="!snapshot"
+        class="mx-auto w-max px-3 py-1.5 bg-amber-400/90 text-gray-800 text-xs font-semibold rounded-full"
+      >
+        ⚠️ กรุณาอยู่ในที่ที่มีแสงสว่างมากขึ้น
+      </div>
       <canvas ref="canvasRef" class="hidden"></canvas>
 
       <div v-if="snapshot">
-        <p class="text-gray-500 mb-4">ตรวจสอบรูปภาพของคุณ</p>
+        <p class="text-[#466baf] mb-4">ตรวจสอบรูปภาพของคุณ</p>
         <img
           :src="snapshot"
           alt="KYC Snapshot"
@@ -99,7 +108,8 @@ onUnmounted(() => {
         <el-button
           v-if="!snapshot"
           @click="captureImage"
-          type="primary"
+          dark
+          :color="'#466baf'"
           size="large"
           class="w-full max-w-xs mx-auto"
         >

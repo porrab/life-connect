@@ -30,6 +30,10 @@ export const formatDateTime = (timestamp: any) => {
 }
 
 export function getRelevantNotification(userProfile: UserProfile) {
+  if (!userProfile.dateOfBirth || typeof userProfile.dateOfBirth !== 'string') {
+    return null
+  }
+
   const age = calculateAge(userProfile.dateOfBirth)
 
   if (age === 59) {
